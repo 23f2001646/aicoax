@@ -19,7 +19,7 @@ export const BG_PRESETS: Record<string, { label: string; emoji: string; css: str
 };
 
 /* ── Context types ───────────────────────────────────────── */
-export type Theme = "dark" | "light" | "blush";
+export type Theme = "dark" | "light" | "blush" | "neon" | "white" | "violet";
 
 interface AppCtx {
   user: User | null;
@@ -34,7 +34,7 @@ interface AppCtx {
 }
 
 const AppContext = createContext<AppCtx>({
-  user: null, prefs: defaultPrefs(), theme: "dark", bgCss: "#020617",
+  user: null, prefs: defaultPrefs(), theme: "white", bgCss: "#fdf6f9",
   setTheme: () => {}, setBg: () => {}, updatePrefs: () => {}, logout: () => {}, authReady: false,
 });
 
@@ -141,9 +141,16 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     router.replace("/login");
   }, [router]);
 
+  // Theme-driven background overrides (when no custom bg set)
+  const THEME_BG: Partial<Record<Theme, string>> = {
+    neon:   "#020202",
+    white:  "linear-gradient(135deg,#fdf6f9 0%,#fce8f0 50%,#f0f4fc 100%)",
+    violet: "linear-gradient(135deg,#0a0118 0%,#120828 50%,#0e0420 100%)",
+  };
+
   const bgCss = prefs.background === "custom" && prefs.bgCustomUrl
     ? `url(${prefs.bgCustomUrl}) center/cover no-repeat`
-    : (BG_PRESETS[prefs.background]?.css ?? BG_PRESETS.default.css);
+    : (BG_PRESETS[prefs.background]?.css ?? THEME_BG[prefs.theme as Theme] ?? BG_PRESETS.default.css);
 
   const value: AppCtx = { user, prefs, theme: prefs.theme, bgCss, setTheme, setBg, updatePrefs, logout, authReady: ready };
 

@@ -9,7 +9,7 @@ export interface UserPrefs {
   mayaCallsMe: string;
   mayaTone: "gentle" | "direct" | "fun" | "motivational";
   lang: string;
-  theme: "dark" | "light" | "blush";
+  theme: "dark" | "light" | "blush" | "neon" | "white" | "violet";
   background: string;
   bgCustomUrl?: string;
   // onboarding
@@ -62,7 +62,7 @@ export function getSession(): User | null {
 }
 
 export function defaultPrefs(): UserPrefs {
-  return { mayaCallsMe: "", mayaTone: "gentle", lang: "en", theme: "dark", background: "default", onboardingDone: false, onboardingReason: "", onboardingMood: 3 };
+  return { mayaCallsMe: "", mayaTone: "gentle", lang: "en", theme: "white", background: "default", onboardingDone: false, onboardingReason: "", onboardingMood: 3 };
 }
 
 export function getUserPrefs(userId: string): UserPrefs {

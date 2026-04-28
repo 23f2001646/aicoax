@@ -1,54 +1,133 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────
+   🎨 DESIGN TOKENS (DEFAULT = DARK)
+───────────────────────────────────────────── */
 :root {
   --font-geist-sans: "Geist", sans-serif;
   --font-instrument-serif: "Instrument Serif", Georgia, serif;
+
+  --bg: #020617;
+  --card: #0f172a;
+  --card-soft: #111827;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --border: #516a91;
+
+  --accent: #14b8a6;
+  --accent-soft: #0d9488;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 
-/* ── LIGHT THEME ─────────────────────────────────────────── */
-[data-theme="light"] .bg-slate-950  { background-color: #f0f4f8 !important; }
-[data-theme="light"] .bg-slate-900  { background-color: #ffffff !important; }
-[data-theme="light"] .bg-slate-800  { background-color: #e8eef4 !important; }
-[data-theme="light"] .bg-slate-700  { background-color: #d1dbe6 !important; }
-[data-theme="light"] .text-white    { color: #0f172a !important; }
-[data-theme="light"] .text-slate-400 { color: #4a6080 !important; }
-[data-theme="light"] .text-slate-500 { color: #607090 !important; }
-[data-theme="light"] .text-slate-600 { color: #5a6a7a !important; }
-[data-theme="light"] .text-slate-300 { color: #2a3a50 !important; }
-[data-theme="light"] .border-slate-800 { border-color: #d0dce8 !important; }
-[data-theme="light"] .border-slate-700 { border-color: #b8c8d8 !important; }
-[data-theme="light"] .border-slate-600 { border-color: #a0b8cc !important; }
-[data-theme="light"] .min-h-screen  { background-color: #f0f4f8 !important; }
-[data-theme="light"] body           { background-color: transparent !important; }
+/* Apply base theme automatically */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans);
+}
 
-/* ── BLUSH PINK THEME ────────────────────────────────────── */
-[data-theme="blush"] .bg-slate-950  { background-color: #1a0210 !important; }
-[data-theme="blush"] .bg-slate-900  { background-color: #280618 !important; }
-[data-theme="blush"] .bg-slate-800  { background-color: #3a0a22 !important; }
-[data-theme="blush"] .bg-slate-700  { background-color: #4a1030 !important; }
-[data-theme="blush"] .text-white    { color: #ffe4f0 !important; }
-[data-theme="blush"] .text-slate-400 { color: #e090b8 !important; }
-[data-theme="blush"] .text-slate-500 { color: #c070a0 !important; }
-[data-theme="blush"] .text-slate-600 { color: #b06090 !important; }
-[data-theme="blush"] .text-slate-300 { color: #f0b0d0 !important; }
-[data-theme="blush"] .border-slate-800 { border-color: #5a1035 !important; }
-[data-theme="blush"] .border-slate-700 { border-color: #6a1840 !important; }
-[data-theme="blush"] .border-slate-600 { border-color: #7a2050 !important; }
-[data-theme="blush"] .min-h-screen  { background-color: transparent !important; }
-[data-theme="blush"] .bg-slate-900\/80 { background-color: rgba(40,6,24,0.85) !important; }
-[data-theme="blush"] .bg-slate-800\/50 { background-color: rgba(58,10,34,0.5) !important; }
-[data-theme="blush"] .text-green-400 { color: #f472b6 !important; }
-[data-theme="blush"] .text-teal-400  { color: #f9a8d4 !important; }
+/* ─────────────────────────────────────────────
+   🌞 LIGHT THEME
+───────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --card-soft: #eef2f7;
+  --text: #1e293b;
+  --muted: #475569;
+  --border: #cbd5e1;
 
-/* ── SCROLLBAR ───────────────────────────────────────────── */
+  --accent: #0ea5e9;
+  --accent-soft: #0284c7;
+}
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.15); border-radius: 2px; }
+/* ─────────────────────────────────────────────
+   🌸 BLUSH THEME
+───────────────────────────────────────────── */
+[data-theme="blush"] {
+  --bg: #1a0210;
+  --card: #2a0a1c;
+  --card-soft: #3a0a22;
+  --text: #ffe4f0;
+  --muted: #f9a8d4;
+  --border: #5a1035;
 
+  --accent: #f472b6;
+  --accent-soft: #ec4899;
+}
+
+/* ─────────────────────────────────────────────
+   ⚡ NEON THEME
+───────────────────────────────────────────── */
+[data-theme="neon"] {
+  --bg: #020202;
+  --card: #0a0a0a;
+  --card-soft: #111111;
+  --text: #f5f5f5;
+  --muted: #ff4d88;
+  --border: #222222;
+
+  --accent: #00f5d4;
+  --accent-soft: #00e5c4;
+}
+
+/* ─────────────────────────────────────────────
+   🌹 WHITE ROSE THEME
+───────────────────────────────────────────── */
+[data-theme="white"] {
+  --bg: #fdf6f9;
+  --card: #ffffff;
+  --card-soft: #f5e8ef;
+  --text: #1a0a2e;
+  --muted: #6b3a6b;
+  --border: #e5c6d6;
+
+  --accent: #1a0a2e;
+  --accent-soft: #10031c;
+}
+
+/* ─────────────────────────────────────────────
+   🟣 VIOLET THEME
+───────────────────────────────────────────── */
+[data-theme="violet"] {
+  --bg: #0a0118;
+  --card: #120828;
+  --card-soft: #1c1038;
+  --text: #f3e8ff;
+  --muted: #c4b5fd;
+  --border: #2e1858;
+
+  --accent: #a78bfa;
+  --accent-soft: #8b5cf6;
+}
+
+/* ─────────────────────────────────────────────
+   🧱 UTILITY CLASSES (USE THESE INSTEAD OF slate)
+───────────────────────────────────────────── */
+.bg-app        { background: var(--bg); }
+.bg-card       { background: var(--card); }
+.bg-card-soft  { background: var(--card-soft); }
+
+.text-main     { color: var(--text); }
+.text-muted    { color: var(--muted); }
+
+.border-app    { border-color: var(--border); }
+
+.text-accent   { color: var(--accent); }
+.bg-accent     { background: var(--accent); }
+
+/* Glass effect */
+.glass {
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+/* ─────────────────────────────────────────────
+   ✨ ANIMATIONS
+───────────────────────────────────────────── */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
@@ -61,28 +140,106 @@ html, body { height: 100%; }
 }
 .pulse-ring { animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
 
-@keyframes breath-expand {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.4); }
-}
-
-/* ── Scrollbar hide utility ──────────────────────── */
-.scrollbar-none::-webkit-scrollbar { display: none; }
-.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* ── Safe area for notched phones ───────────────── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-}
-
-/* ── Tap highlight removal on mobile ────────────── */
-button, a { -webkit-tap-highlight-color: transparent; }
-
-/* ── Home page design animations ───────────────── */
 @keyframes mayaGlow {
   0%, 100% { opacity: 0.7; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.08); }
 }
+.maya-glow { animation: mayaGlow 4.5s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────────
+   📱 MOBILE / SCROLL
+───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(148,163,184,0.2);
+  border-radius: 2px;
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+}
+
+/* Tap highlight */
+button, a { -webkit-tap-highlight-color: transparent; }
+
+/* ─────────────────────────────────────────────
+   🔤 TYPOGRAPHY
+───────────────────────────────────────────── */
+.font-serif { font-family: var(--font-instrument-serif); }
+
+.text-fluid-sm { font-size: clamp(12px, 2vw, 14px); }
+.text-fluid-base { font-size: clamp(14px, 2.5vw, 16px); }
+.text-fluid-lg { font-size: clamp(18px, 3.5vw, 24px); }
+.text-fluid-xl { font-size: clamp(24px, 5vw, 36px); }
+
+/* ─────────────────────────────────────────────
+   🔁 COMPATIBILITY BRIDGE
+   Maps old Tailwind slate-* classes → CSS tokens
+   so existing pages theme correctly without a full rewrite
+───────────────────────────────────────────── */
+[data-theme]:not([data-theme="dark"]) .bg-slate-950   { background-color: var(--bg) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-900   { background-color: var(--card) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-800   { background-color: var(--card-soft) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-700   { background-color: color-mix(in srgb, var(--card-soft) 70%, var(--border)) !important; }
+[data-theme]:not([data-theme="dark"]) .text-white     { color: var(--text) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-100 { color: var(--text) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-200 { color: var(--text) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-300 { color: color-mix(in srgb, var(--text) 85%, var(--muted)) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-400 { color: var(--muted) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-500 { color: color-mix(in srgb, var(--muted) 80%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .text-slate-600 { color: color-mix(in srgb, var(--muted) 65%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .border-slate-800 { border-color: var(--border) !important; }
+[data-theme]:not([data-theme="dark"]) .border-slate-700 { border-color: color-mix(in srgb, var(--border) 80%, var(--muted)) !important; }
+[data-theme]:not([data-theme="dark"]) .border-slate-600 { border-color: color-mix(in srgb, var(--border) 60%, var(--muted)) !important; }
+[data-theme]:not([data-theme="dark"]) .text-teal-400  { color: var(--accent) !important; }
+[data-theme]:not([data-theme="dark"]) .text-teal-300  { color: var(--accent-soft) !important; }
+[data-theme]:not([data-theme="dark"]) .text-green-400 { color: var(--accent) !important; }
+[data-theme]:not([data-theme="dark"]) .min-h-screen   { background-color: var(--bg) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-900\/80 { background-color: color-mix(in srgb, var(--card) 85%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-800\/50 { background-color: color-mix(in srgb, var(--card-soft) 55%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .placeholder-slate-500::placeholder { color: var(--muted) !important; opacity: 0.7; }
+[data-theme="light"] body, [data-theme="white"] body { background-color: transparent !important; }
+
+/* Semi-transparent slate variants used in friend page inputs/pills */
+[data-theme]:not([data-theme="dark"]) .bg-slate-800\/80 { background-color: color-mix(in srgb, var(--card-soft) 85%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-800\/60 { background-color: color-mix(in srgb, var(--card-soft) 65%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-800\/40 { background-color: color-mix(in srgb, var(--card-soft) 45%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-700\/60 { background-color: color-mix(in srgb, var(--card-soft) 70%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-700\/40 { background-color: color-mix(in srgb, var(--card-soft) 50%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .hover\:bg-slate-700:hover { background-color: var(--card-soft) !important; }
+[data-theme]:not([data-theme="dark"]) .hover\:bg-slate-600:hover { background-color: color-mix(in srgb, var(--card-soft) 80%, var(--border)) !important; }
+
+/* Mood starter buttons — dark-only colors, override for light themes */
+[data-theme]:not([data-theme="dark"]) .bg-blue-900\/30,
+[data-theme]:not([data-theme="dark"]) .bg-orange-900\/30,
+[data-theme]:not([data-theme="dark"]) .bg-rose-900\/30,
+[data-theme]:not([data-theme="dark"]) .bg-indigo-900\/30,
+[data-theme]:not([data-theme="dark"]) .bg-yellow-900\/30,
+[data-theme]:not([data-theme="dark"]) .bg-purple-900\/30 { background-color: color-mix(in srgb, var(--card-soft) 70%, transparent) !important; }
+
+[data-theme]:not([data-theme="dark"]) .border-blue-700\/40,
+[data-theme]:not([data-theme="dark"]) .border-orange-700\/40,
+[data-theme]:not([data-theme="dark"]) .border-rose-700\/40,
+[data-theme]:not([data-theme="dark"]) .border-indigo-700\/40,
+[data-theme]:not([data-theme="dark"]) .border-yellow-700\/40,
+[data-theme]:not([data-theme="dark"]) .border-purple-700\/40 { border-color: var(--border) !important; }
+
+/* Teal/pink accent boxes */
+[data-theme]:not([data-theme="dark"]) .bg-teal-900\/30  { background-color: color-mix(in srgb, var(--accent) 12%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .border-teal-700\/40 { border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .text-teal-300    { color: var(--accent-soft) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-pink-900\/30  { background-color: color-mix(in srgb, var(--accent) 12%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .border-pink-700\/40 { border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important; }
+
+/* Sidebar / left panel in friend page */
+[data-theme]:not([data-theme="dark"]) .bg-slate-900\/95 { background-color: color-mix(in srgb, var(--card) 95%, transparent) !important; }
+[data-theme]:not([data-theme="dark"]) .bg-slate-900\/90 { background-color: color-mix(in srgb, var(--card) 90%, transparent) !important; }
+
+/* Extra animations used across pages */
 @keyframes mayaRing {
   0% { transform: scale(0.92); opacity: 0.7; }
   100% { transform: scale(1.45); opacity: 0; }
@@ -99,26 +256,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   0%, 100% { transform: translateY(0); opacity: 0.55; }
   50% { transform: translateY(4px); opacity: 1; }
 }
-@keyframes breathePulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.15); opacity: 0.9; }
-}
 @keyframes barRise {
   from { transform: scaleY(0); opacity: 0; }
-  to { transform: scaleY(1); opacity: 1; }
+  to   { transform: scaleY(1); opacity: 1; }
 }
-@keyframes nodeBob {
-  0%, 100% { transform: translate(0,0); }
-  50% { transform: translate(0,-3px); }
-}
-.font-serif { font-family: var(--font-instrument-serif); }
-.maya-glow { animation: mayaGlow 4.5s ease-in-out infinite; }
-.maya-ring { animation: mayaRing 3s ease-out infinite; }
+.maya-ring  { animation: mayaRing 3s ease-out infinite; }
 .maya-float { animation: mayaFloat 5.5s ease-in-out infinite; }
 .scroll-hint { animation: scrollHint 2.4s ease-in-out infinite; }
-
-/* ── Text size fluid helpers ────────────────────── */
-.text-fluid-sm { font-size: clamp(12px, 2vw, 14px); }
-.text-fluid-base { font-size: clamp(14px, 2.5vw, 16px); }
-.text-fluid-lg { font-size: clamp(18px, 3.5vw, 24px); }
-.text-fluid-xl { font-size: clamp(24px, 5vw, 36px); }
