@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
 
 const JOURNAL_PROMPT = `You are a compassionate journaling guide. The user has written a journal entry about their feelings and experiences.
 
@@ -13,6 +13,7 @@ Provide a warm, insightful reflection that:
 Keep it short: 3-4 sentences max. Warm, human, non-clinical.`;
 
 export async function POST(req: Request) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { entry } = await req.json();
 
   const stream = await client.messages.stream({

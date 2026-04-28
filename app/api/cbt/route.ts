@@ -1,9 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { CBT_PROMPT } from "@/lib/prompts";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
 
 export async function POST(req: Request) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { situation, thought, emotion } = await req.json();
 
   const response = await client.messages.create({

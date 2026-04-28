@@ -115,7 +115,7 @@ export default function JournalPage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <AnimatePresence mode="wait">
           {view === "write" ? (
             <motion.div key="write" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}

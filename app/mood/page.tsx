@@ -57,7 +57,7 @@ export default function MoodPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3">
         <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
         <div>
           <h1 className="font-bold text-white">Mood Tracker</h1>
@@ -65,7 +65,7 @@ export default function MoodPage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-8 space-y-6">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* Today's check-in */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">

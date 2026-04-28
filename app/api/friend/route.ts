@@ -1,7 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 const FRIEND_PROMPT = `You are Maya — a warm, funny, deeply caring best friend. NOT a therapist, NOT a bot. A real friend.
 
 ## Your personality
@@ -78,13 +76,27 @@ const LANG_INSTRUCTIONS: Record<string, string> = {
   "en":    "", // English — no extra instruction
 };
 
+const TONE_ADDONS: Record<string, string> = {
+  gentle:       "Your tone is especially soft, gentle and nurturing. Lead with warmth and patience.",
+  direct:       "Your tone is direct and honest. Skip the fluff — give real talk with love.",
+  fun:          "Your tone is playful and fun. Bring more humour and lightness while still being caring.",
+  motivational: "Your tone is high-energy and motivational. Hype them up, celebrate wins, keep the energy UP.",
+};
+
 export async function POST(req: Request) {
-  const { messages, lang = "en" } = await req.json();
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const { messages, lang = "en", userName = "friend", mayaTone = "gentle" } = await req.json();
 
   const langInstruction = LANG_INSTRUCTIONS[lang] ?? "";
-  const systemPrompt = langInstruction
-    ? `${FRIEND_PROMPT}\n\n## Language\n${langInstruction}`
-    : FRIEND_PROMPT;
+  const toneInstruction = TONE_ADDONS[mayaTone] ?? "";
+  const nameInstruction = `The user's name is ${userName}. Use their name occasionally (not every message) to feel personal.`;
+
+  const systemPrompt = [
+    FRIEND_PROMPT,
+    nameInstruction,
+    toneInstruction && `## Tone\n${toneInstruction}`,
+    langInstruction && `## Language\n${langInstruction}`,
+  ].filter(Boolean).join("\n\n");
 
   const stream = await client.messages.stream({
     model: "claude-sonnet-4-6",

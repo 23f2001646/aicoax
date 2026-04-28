@@ -29,7 +29,7 @@ const GROUNDING = [
 export default function CrisisPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3">
         <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
         <div>
           <h1 className="font-bold text-white">Crisis Support</h1>
@@ -37,7 +37,7 @@ export default function CrisisPage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-8 space-y-8">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
         {/* Immediate message */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-br from-teal-900/40 to-cyan-900/40 border border-teal-700/40 rounded-2xl p-6 text-center">

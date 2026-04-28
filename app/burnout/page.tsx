@@ -86,7 +86,7 @@ export default function BurnoutPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3">
         <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
         <div>
           <h1 className="font-bold text-white">Burnout Check</h1>
@@ -94,7 +94,7 @@ export default function BurnoutPage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <AnimatePresence mode="wait">
           {step === "intro" && (
             <motion.div key="intro" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
@@ -142,13 +142,13 @@ export default function BurnoutPage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                     {SCALE.map((s) => (
                       <motion.button key={s.value} onClick={() => answer(s.value)}
                         whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                        className="flex flex-col items-center gap-2 bg-slate-800 hover:bg-orange-900/40 hover:border-orange-600 border border-slate-700 rounded-xl p-3 transition-all">
-                        <span className="text-xl font-bold text-white">{s.value}</span>
-                        <span className="text-[9px] text-slate-400 text-center leading-tight">{s.label}</span>
+                        className="flex flex-col items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-orange-900/40 hover:border-orange-600 border border-slate-700 rounded-xl p-2 sm:p-3 transition-all">
+                        <span className="text-base sm:text-xl font-bold text-white">{s.value}</span>
+                        <span className="text-[8px] sm:text-[9px] text-slate-400 text-center leading-tight">{s.label}</span>
                       </motion.button>
                     ))}
                   </div>

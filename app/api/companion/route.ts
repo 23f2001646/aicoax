@@ -1,9 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { COMPANION_PROMPT } from "@/lib/prompts";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
 
 export async function POST(req: Request) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { messages } = await req.json();
 
   const stream = await client.messages.stream({

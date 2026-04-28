@@ -1,9 +1,49 @@
 @import "tailwindcss";
 
-:root { --font-geist-sans: "Geist", sans-serif; }
+:root {
+  --font-geist-sans: "Geist", sans-serif;
+  --font-instrument-serif: "Instrument Serif", Georgia, serif;
+}
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+
+/* ── LIGHT THEME ─────────────────────────────────────────── */
+[data-theme="light"] .bg-slate-950  { background-color: #f0f4f8 !important; }
+[data-theme="light"] .bg-slate-900  { background-color: #ffffff !important; }
+[data-theme="light"] .bg-slate-800  { background-color: #e8eef4 !important; }
+[data-theme="light"] .bg-slate-700  { background-color: #d1dbe6 !important; }
+[data-theme="light"] .text-white    { color: #0f172a !important; }
+[data-theme="light"] .text-slate-400 { color: #4a6080 !important; }
+[data-theme="light"] .text-slate-500 { color: #607090 !important; }
+[data-theme="light"] .text-slate-600 { color: #5a6a7a !important; }
+[data-theme="light"] .text-slate-300 { color: #2a3a50 !important; }
+[data-theme="light"] .border-slate-800 { border-color: #d0dce8 !important; }
+[data-theme="light"] .border-slate-700 { border-color: #b8c8d8 !important; }
+[data-theme="light"] .border-slate-600 { border-color: #a0b8cc !important; }
+[data-theme="light"] .min-h-screen  { background-color: #f0f4f8 !important; }
+[data-theme="light"] body           { background-color: transparent !important; }
+
+/* ── BLUSH PINK THEME ────────────────────────────────────── */
+[data-theme="blush"] .bg-slate-950  { background-color: #1a0210 !important; }
+[data-theme="blush"] .bg-slate-900  { background-color: #280618 !important; }
+[data-theme="blush"] .bg-slate-800  { background-color: #3a0a22 !important; }
+[data-theme="blush"] .bg-slate-700  { background-color: #4a1030 !important; }
+[data-theme="blush"] .text-white    { color: #ffe4f0 !important; }
+[data-theme="blush"] .text-slate-400 { color: #e090b8 !important; }
+[data-theme="blush"] .text-slate-500 { color: #c070a0 !important; }
+[data-theme="blush"] .text-slate-600 { color: #b06090 !important; }
+[data-theme="blush"] .text-slate-300 { color: #f0b0d0 !important; }
+[data-theme="blush"] .border-slate-800 { border-color: #5a1035 !important; }
+[data-theme="blush"] .border-slate-700 { border-color: #6a1840 !important; }
+[data-theme="blush"] .border-slate-600 { border-color: #7a2050 !important; }
+[data-theme="blush"] .min-h-screen  { background-color: transparent !important; }
+[data-theme="blush"] .bg-slate-900\/80 { background-color: rgba(40,6,24,0.85) !important; }
+[data-theme="blush"] .bg-slate-800\/50 { background-color: rgba(58,10,34,0.5) !important; }
+[data-theme="blush"] .text-green-400 { color: #f472b6 !important; }
+[data-theme="blush"] .text-teal-400  { color: #f9a8d4 !important; }
+
+/* ── SCROLLBAR ───────────────────────────────────────────── */
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -25,3 +65,60 @@ html, body { height: 100%; }
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.4); }
 }
+
+/* ── Scrollbar hide utility ──────────────────────── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Safe area for notched phones ───────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+}
+
+/* ── Tap highlight removal on mobile ────────────── */
+button, a { -webkit-tap-highlight-color: transparent; }
+
+/* ── Home page design animations ───────────────── */
+@keyframes mayaGlow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes mayaRing {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+@keyframes mayaFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes caret {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+@keyframes scrollHint {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+@keyframes breathePulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 0.9; }
+}
+@keyframes barRise {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes nodeBob {
+  0%, 100% { transform: translate(0,0); }
+  50% { transform: translate(0,-3px); }
+}
+.font-serif { font-family: var(--font-instrument-serif); }
+.maya-glow { animation: mayaGlow 4.5s ease-in-out infinite; }
+.maya-ring { animation: mayaRing 3s ease-out infinite; }
+.maya-float { animation: mayaFloat 5.5s ease-in-out infinite; }
+.scroll-hint { animation: scrollHint 2.4s ease-in-out infinite; }
+
+/* ── Text size fluid helpers ────────────────────── */
+.text-fluid-sm { font-size: clamp(12px, 2vw, 14px); }
+.text-fluid-base { font-size: clamp(14px, 2.5vw, 16px); }
+.text-fluid-lg { font-size: clamp(18px, 3.5vw, 24px); }
+.text-fluid-xl { font-size: clamp(24px, 5vw, 36px); }

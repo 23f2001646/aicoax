@@ -198,7 +198,7 @@ export default function UnderstandPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3">
         <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
         <div>
           <h1 className="font-bold text-white">Mental Health Library</h1>
@@ -234,7 +234,7 @@ export default function UnderstandPage() {
           </motion.main>
         ) : topic ? (
           <motion.div key="topic" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-            className="max-w-lg mx-auto px-4 py-8">
+            className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
             {/* Topic header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">

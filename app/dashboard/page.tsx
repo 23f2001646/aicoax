@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Heart, Brain, Wind, BookOpen, TrendingDown, PenLine, AlertTriangle, Flame } from "lucide-react";
 import { getMoods } from "@/lib/mood";
+import { useApp } from "@/components/AppProviders";
 
 const TOOLS = [
   { href: "/friend",     emoji: "🧡",  label: "Maya",        sub: "Your AI best friend",          color: "from-pink-600 to-rose-600",     border: "border-pink-700/40"   },
@@ -14,6 +15,11 @@ const TOOLS = [
   { href: "/cbt",        icon: Brain,  label: "CBT",         sub: "Reframe unhelpful thoughts",    color: "from-amber-600 to-orange-600",  border: "border-amber-700/40"  },
   { href: "/burnout",    icon: TrendingDown, label: "Burnout", sub: "Check your burnout level",   color: "from-orange-600 to-red-600",    border: "border-orange-700/40" },
   { href: "/journal",    icon: PenLine, label: "Journal",    sub: "Write with AI insight",         color: "from-indigo-600 to-blue-600",   border: "border-indigo-700/40" },
+  { href: "/habits",     emoji: "💪",  label: "Habits",      sub: "Build daily routines",          color: "from-green-600 to-emerald-600", border: "border-green-700/40"  },
+  { href: "/gratitude",  emoji: "🌸",  label: "Gratitude",   sub: "3 things every day",            color: "from-pink-500 to-rose-500",     border: "border-pink-700/40"   },
+  { href: "/report",     emoji: "📊",  label: "Report",      sub: "AI wellbeing insights",         color: "from-purple-600 to-violet-600", border: "border-purple-700/40" },
+  { href: "/therapist",  emoji: "🏥",  label: "Therapist",   sub: "Find professional support",     color: "from-blue-600 to-cyan-600",     border: "border-blue-700/40"   },
+  { href: "/groups",     emoji: "👥",  label: "Groups",      sub: "Anonymous peer support",        color: "from-violet-600 to-indigo-600", border: "border-violet-700/40" },
   { href: "/crisis",     icon: AlertTriangle, label: "Crisis", sub: "Real human support",         color: "from-red-600 to-red-700",       border: "border-red-700/40"    },
 ];
 
@@ -27,6 +33,7 @@ function moodColor(s: number) {
 const EMOJI: Record<number, string> = {1:"😔",2:"😢",3:"😞",4:"😕",5:"😐",6:"🙂",7:"😊",8:"😄",9:"😁",10:"🤩"};
 
 export default function DashboardPage() {
+  const { user } = useApp();
   const [moods, setMoods]           = useState<{ date: string; score: number }[]>([]);
   const [streak, setStreak]         = useState(0);
   const [journalCount, setJournalCount] = useState(0);
@@ -35,8 +42,6 @@ export default function DashboardPage() {
   useEffect(() => {
     const m = getMoods();
     setMoods(m);
-
-    // Streak calc
     const sorted = [...m].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     let s = 0;
     const check = new Date();
@@ -47,7 +52,6 @@ export default function DashboardPage() {
     }
     if (sorted[0] && new Date(sorted[0].date).toDateString() !== new Date().toDateString()) s = 0;
     setStreak(s);
-
     try {
       setJournalCount(JSON.parse(localStorage.getItem("aicoax_journal") || "[]").length);
       setCbtCount(JSON.parse(localStorage.getItem("aicoax_cbt") || "[]").length);
@@ -60,103 +64,136 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
-        <div>
-          <h1 className="font-bold text-white">Dashboard</h1>
-          <p className="text-xs text-slate-500">Your mental wellness overview</p>
+      {/* Header */}
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3 sticky top-0 z-10">
+        <Link href="/" className="text-slate-400 hover:text-white transition-colors p-1"><ArrowLeft className="w-5 h-5" /></Link>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-bold text-white leading-none">Dashboard</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Your mental wellness overview</p>
         </div>
+        <Link href="/profile" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+          <span className="text-xl">{user?.avatar ?? "👤"}</span>
+          <span className="hidden sm:inline text-sm text-slate-400">{user?.name?.split(" ")[0]}</span>
+        </Link>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { icon: <Flame className="w-4 h-4 text-orange-400" />, value: streak, label: "day streak" },
-            { icon: <Heart className="w-4 h-4 text-rose-400" />,   value: avgMood ?? "—", label: "avg mood (7d)" },
-            { icon: <Brain className="w-4 h-4 text-violet-400" />, value: journalCount + cbtCount, label: "sessions" },
-          ].map((s, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center">
-              <div className="flex items-center justify-center gap-1.5 mb-1">{s.icon}<span className="text-2xl font-black text-white">{s.value}</span></div>
-              <p className="text-[10px] text-slate-500">{s.label}</p>
-            </motion.div>
-          ))}
-        </div>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+        {/* Desktop: two columns / Mobile: single column */}
+        <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
 
-        {/* Today mood */}
-        {today ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-teal-900/30 to-cyan-900/20 border border-teal-800/40 rounded-2xl p-4 flex items-center gap-4">
-            <span className="text-4xl">{EMOJI[today.score] || "😐"}</span>
-            <div>
-              <p className="text-xs text-teal-400 font-medium uppercase tracking-wide">Today</p>
-              <p className="text-white font-semibold">Mood: {today.score}/10</p>
-            </div>
-            <Link href="/mood" className="ml-auto text-xs text-teal-400 hover:text-white border border-teal-700/50 px-3 py-1.5 rounded-lg transition-colors">Update</Link>
-          </motion.div>
-        ) : (
-          <Link href="/mood">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="bg-slate-900 border border-dashed border-slate-700 hover:border-teal-600 rounded-2xl p-4 flex items-center gap-3 transition-colors">
-              <Heart className="w-8 h-8 text-slate-600" />
-              <div>
-                <p className="text-white font-medium text-sm">Log today&apos;s mood</p>
-                <p className="text-xs text-slate-500">You haven&apos;t checked in yet</p>
-              </div>
-              <span className="ml-auto text-slate-500">→</span>
-            </motion.div>
-          </Link>
-        )}
-
-        {/* 7-day chart */}
-        {last7.length >= 2 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">7-Day Mood</p>
-            <div className="flex items-end gap-2 h-20">
-              {last7.map((m, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <motion.div initial={{ height: 0 }} animate={{ height: `${(m.score / 10) * 70}px` }}
-                    transition={{ delay: i * 0.06, duration: 0.5 }}
-                    className="w-full rounded-t-lg" style={{ backgroundColor: moodColor(m.score) }} />
-                  <span className="text-[9px] text-slate-600">
-                    {new Date(m.date).toLocaleDateString("en", { weekday: "short" })[0]}
-                  </span>
-                </div>
+          {/* Left column */}
+          <div className="space-y-5">
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { icon: <Flame className="w-4 h-4 text-orange-400" />, value: streak, label: "day streak" },
+                { icon: <Heart className="w-4 h-4 text-rose-400" />,   value: avgMood ?? "—", label: "avg mood (7d)" },
+                { icon: <Brain className="w-4 h-4 text-violet-400" />, value: journalCount + cbtCount, label: "sessions" },
+              ].map((s, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+                  className="bg-slate-900 border border-slate-800 rounded-2xl p-3 sm:p-4 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">{s.icon}
+                    <span className="text-xl sm:text-2xl font-black text-white">{s.value}</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500">{s.label}</p>
+                </motion.div>
               ))}
             </div>
-          </motion.div>
-        )}
 
-        {/* Tools grid */}
-        <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">All Tools</p>
-          <div className="grid grid-cols-2 gap-3">
+            {/* Today mood */}
+            {today ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+                className="bg-gradient-to-br from-teal-900/30 to-cyan-900/20 border border-teal-800/40 rounded-2xl p-4 flex items-center gap-4">
+                <span className="text-3xl sm:text-4xl">{EMOJI[today.score] || "😐"}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-teal-400 font-medium uppercase tracking-wide">Today</p>
+                  <p className="text-white font-semibold">Mood: {today.score}/10</p>
+                </div>
+                <Link href="/mood" className="text-xs text-teal-400 hover:text-white border border-teal-700/50 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">Update</Link>
+              </motion.div>
+            ) : (
+              <Link href="/mood">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="bg-slate-900 border border-dashed border-slate-700 hover:border-teal-600 rounded-2xl p-4 flex items-center gap-3 transition-colors">
+                  <Heart className="w-7 h-7 sm:w-8 sm:h-8 text-slate-600 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-white font-medium text-sm">Log today&apos;s mood</p>
+                    <p className="text-xs text-slate-500">You haven&apos;t checked in yet</p>
+                  </div>
+                  <span className="ml-auto text-slate-500 shrink-0">→</span>
+                </motion.div>
+              </Link>
+            )}
+
+            {/* 7-day chart */}
+            {last7.length >= 2 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+                className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">7-Day Mood</p>
+                <div className="flex items-end gap-1 sm:gap-2 h-20">
+                  {last7.map((m, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <motion.div initial={{ height: 0 }} animate={{ height: `${(m.score / 10) * 70}px` }}
+                        transition={{ delay: i * 0.06, duration: 0.5 }}
+                        className="w-full rounded-t-lg" style={{ backgroundColor: moodColor(m.score) }} />
+                      <span className="text-[9px] text-slate-600">
+                        {new Date(m.date).toLocaleDateString("en", { weekday: "short" })[0]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Tools grid — shown inline on mobile, hidden on lg (shown in right col) */}
+            <div className="lg:hidden">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">All Tools</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {TOOLS.map((t, i) => (
+                  <motion.div key={t.href} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 * i }}>
+                    <Link href={t.href}
+                      className={`flex items-center gap-3 bg-slate-900 border ${t.border} hover:border-slate-600 rounded-2xl p-3 sm:p-4 transition-all group hover:bg-slate-800/50`}>
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center shrink-0 text-white group-hover:scale-105 transition-transform`}>
+                        {"emoji" in t ? <span className="text-lg sm:text-xl">{t.emoji}</span> : <t.icon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white">{t.label}</p>
+                        <p className="text-[10px] text-slate-500 truncate hidden sm:block">{t.sub}</p>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-amber-950/20 border border-amber-900/30 rounded-xl p-3 sm:p-4 text-center">
+              <p className="text-xs text-amber-700/80 leading-relaxed">
+                AiCoax is a mental wellness companion — not a medical tool.
+                <Link href="/crisis" className="underline ml-1">Crisis resources →</Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Right column — only on desktop */}
+          <div className="hidden lg:block space-y-4">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">All Tools</p>
             {TOOLS.map((t, i) => (
-              <motion.div key={t.href} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
+              <motion.div key={t.href} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.04 * i }}>
                 <Link href={t.href}
                   className={`flex items-center gap-3 bg-slate-900 border ${t.border} hover:border-slate-600 rounded-2xl p-4 transition-all group hover:bg-slate-800/50`}>
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center shrink-0 text-white group-hover:scale-105 transition-transform`}>
-                    {"emoji" in t
-                      ? <span className="text-xl">{t.emoji}</span>
-                      : <t.icon className="w-5 h-5" />}
+                    {"emoji" in t ? <span className="text-xl">{t.emoji}</span> : <t.icon className="w-5 h-5" />}
                   </div>
-                  <div className="min-w-0">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white">{t.label}</p>
                     <p className="text-[10px] text-slate-500 truncate">{t.sub}</p>
                   </div>
+                  <span className="text-slate-600 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-all">→</span>
                 </Link>
               </motion.div>
             ))}
           </div>
-        </div>
 
-        <div className="bg-amber-950/20 border border-amber-900/30 rounded-xl p-4 text-center">
-          <p className="text-xs text-amber-700/80 leading-relaxed">
-            AiCoax is a mental wellness companion — not a medical tool.
-            <Link href="/crisis" className="underline ml-1">Crisis resources →</Link>
-          </p>
         </div>
       </main>
     </div>

@@ -1,316 +1,509 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Wind, Brain, TrendingDown, AlertTriangle, BookOpen, Send, Mic, MicOff, Sparkles, PenLine, LayoutDashboard } from "lucide-react";
-import { saveMood, getTodayMood } from "@/lib/mood";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useApp } from "@/components/AppProviders";
+import MayaAvatar from "@/components/MayaAvatar";
 
-interface Message { role: "user" | "assistant"; content: string; }
+// ── Palette ──────────────────────────────────────────────────
+const P = {
+  bg0: "#1a0a1f",
+  bg1: "#241027",
+  bg2: "#2e1532",
+  surface: "rgba(255,255,255,0.04)",
+  border: "rgba(255,255,255,0.08)",
+  text: "#fbeef5",
+  textDim: "#c9adc4",
+  textMute: "#8a6e87",
+  pink: "#f472b6",
+  pinkSoft: "#fb7185",
+  teal: "#5eead4",
+  tealSoft: "#34d399",
+  amber: "#fbbf24",
+  indigo: "#a78bfa",
+};
 
-const MOODS = [
-  { score: 1, emoji: "😔", label: "Very low" },
-  { score: 3, emoji: "😞", label: "Low" },
-  { score: 5, emoji: "😐", label: "Okay" },
-  { score: 7, emoji: "🙂", label: "Good" },
-  { score: 9, emoji: "😊", label: "Great" },
-];
-
-const STARTERS = [
-  "I've been feeling really anxious lately and I don't know why",
-  "Work has been overwhelming me and I can't switch off",
-  "I feel empty and unmotivated, like nothing matters",
-  "I keep having negative thoughts I can't stop",
-  "I'm struggling to sleep because of stress",
-];
-
-const NAV = [
-  { href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard", color: "text-teal-400" },
-  { href: "/friend", icon: <span className="text-lg leading-none">🧡</span>, label: "Maya", color: "text-pink-400" },
-  { href: "/breathe", icon: <Wind className="w-5 h-5" />, label: "Breathe", color: "text-cyan-400" },
-  { href: "/understand", icon: <BookOpen className="w-5 h-5" />, label: "Learn", color: "text-violet-400" },
-  { href: "/mood", icon: <Heart className="w-5 h-5" />, label: "Mood", color: "text-rose-400" },
-  { href: "/cbt", icon: <Brain className="w-5 h-5" />, label: "CBT", color: "text-amber-400" },
-  { href: "/burnout", icon: <TrendingDown className="w-5 h-5" />, label: "Burnout", color: "text-orange-400" },
-  { href: "/journal", icon: <PenLine className="w-5 h-5" />, label: "Journal", color: "text-violet-400" },
-  { href: "/crisis", icon: <AlertTriangle className="w-5 h-5" />, label: "Help", color: "text-red-400" },
-];
-
-export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [moodSet, setMoodSet] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+// ── Typed Greeting ───────────────────────────────────────────
+function TypedGreeting({ name }: { name: string }) {
+  const lines = [
+    `Hi ${name}, nice to meet you.`,
+    `We'll go along every way —`,
+    `today's going to be good.`,
+  ];
+  const [shown, setShown] = useState(["", "", ""]);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    try {
-      const saved = localStorage.getItem("aicoax_chat_main");
-      if (saved) setMessages(JSON.parse(saved));
-    } catch {}
-  }, []);
+    let li = 0, ci = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      if (li >= lines.length) { setDone(true); return; }
+      const cur = lines[li];
+      if (ci <= cur.length) {
+        setShown(s => { const n = [...s]; n[li] = cur.slice(0, ci); return n; });
+        ci++;
+        timer = setTimeout(tick, 38);
+      } else {
+        li++; ci = 0;
+        timer = setTimeout(tick, 380);
+      }
+    };
+    timer = setTimeout(tick, 700);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name]);
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem("aicoax_chat_main", JSON.stringify(messages));
-    }
-  }, [messages]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  useEffect(() => {
-    const today = getTodayMood();
-    if (today) setMoodSet(true);
-  }, []);
-
-  const submitMood = (score: number) => {
-    setMoodSet(true);
-    saveMood({ date: new Date().toISOString(), score, emotion: MOODS.find(m => m.score === score)?.label || "", note: "" });
-  };
-
-  const send = async (text: string) => {
-    if (!text.trim() || loading) return;
-    const newMsgs: Message[] = [...messages, { role: "user", content: text }];
-    setMessages(newMsgs);
-    setInput("");
-    setLoading(true);
-
-    const res = await fetch("/api/companion", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: newMsgs }),
-    });
-    if (!res.body) { setLoading(false); return; }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let acc = "";
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      acc += decoder.decode(value, { stream: true });
-      setMessages((prev) => { const u = [...prev]; u[u.length - 1] = { role: "assistant", content: acc }; return u; });
-    }
-    setLoading(false);
-  };
-
-  const toggleVoice = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
-    if (!SR) return;
-    if (listening) { recognitionRef.current?.stop(); setListening(false); return; }
-    const r = new SR();
-    r.lang = "en-US";
-    r.interimResults = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    r.onresult = (e: any) => setInput((prev) => prev ? prev + " " + e.results[0][0].transcript : e.results[0][0].transcript);
-    r.onend = () => setListening(false);
-    r.onerror = () => setListening(false);
-    recognitionRef.current = r;
-    r.start();
-    setListening(true);
-  };
-
-  const hasChat = messages.length > 0;
+  const activeLineIdx = shown.findIndex((l, i) => i < lines.length && l.length < lines[i].length);
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950">
-      {/* Header */}
-      <header className="shrink-0 px-4 py-3 border-b border-slate-800/60 bg-slate-900/60 backdrop-blur-sm flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="relative">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
-              <Heart className="w-4 h-4 text-white" fill="white" />
-            </div>
-            <div className="absolute inset-0 rounded-xl bg-teal-400/20 animate-ping" />
-          </div>
-          <div>
-            <h1 className="font-bold text-white text-sm leading-none">AiCoax</h1>
-            <p className="text-[10px] text-slate-500">AI Companion · Not a therapist</p>
-          </div>
+    <div style={{
+      fontFamily: "var(--font-instrument-serif), Georgia, serif",
+      fontSize: "clamp(26px, 6vw, 34px)",
+      lineHeight: 1.18,
+      color: P.text,
+      letterSpacing: "-0.015em",
+      textAlign: "center",
+      maxWidth: 320,
+      minHeight: 130,
+    }}>
+      {shown.map((l, i) => (
+        <div key={i} style={{
+          opacity: l ? 1 : 0.3,
+          color: i === 0 ? P.text : P.textDim,
+          fontStyle: i === 1 ? "italic" : "normal",
+        }}>
+          {l}
+          {!done && i === activeLineIdx && (
+            <span style={{
+              display: "inline-block", width: 2, height: "0.9em",
+              background: P.pink, marginLeft: 2,
+              animation: "caret 0.7s steps(2) infinite",
+              verticalAlign: "text-bottom",
+            }} />
+          )}
         </div>
-        <div className="flex items-center gap-1">
-          {NAV.slice(0, 4).map((n) => (
-            <Link key={n.href} href={n.href} className={`hidden md:flex items-center gap-1.5 text-xs ${n.color} hover:text-white transition-colors px-2 py-1.5 rounded-lg hover:bg-slate-800`}>
-              {n.icon}<span className="hidden lg:inline text-[11px]">{n.label}</span>
-            </Link>
-          ))}
-          <Link href="/crisis" className="text-xs text-red-400 hover:text-red-300 transition-colors px-2.5 py-1.5 rounded-lg hover:bg-red-900/20 border border-red-800/40 ml-1 flex items-center gap-1">
-            <AlertTriangle className="w-3.5 h-3.5" /><span className="hidden md:inline text-[11px]">Crisis Help</span>
-          </Link>
+      ))}
+    </div>
+  );
+}
+
+// ── Feature card visuals ─────────────────────────────────────
+function BreatheVisual() {
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 70% 50%, ${P.tealSoft}30, transparent 60%)` }} />
+      {[0, 1, 2].map(i => (
+        <div key={i} style={{
+          position: "absolute", top: "50%", left: "50%",
+          width: 80 + i * 50, height: 80 + i * 50,
+          marginLeft: -(40 + i * 25), marginTop: -(40 + i * 25),
+          borderRadius: "50%",
+          border: `1px solid ${P.tealSoft}${i === 0 ? "99" : i === 1 ? "55" : "22"}`,
+          animation: `breathePulse 4s ease-in-out infinite`,
+          animationDelay: `${i * 0.8}s`,
+        }} />
+      ))}
+      <div style={{
+        position: "absolute", top: "50%", left: "50%",
+        width: 60, height: 60, marginLeft: -30, marginTop: -30,
+        borderRadius: "50%",
+        background: `radial-gradient(circle at 35% 30%, #fff, ${P.tealSoft})`,
+        boxShadow: `0 0 24px ${P.tealSoft}aa`,
+      }} />
+    </div>
+  );
+}
+
+function ReportVisual() {
+  const bars = [0.42, 0.65, 0.38, 0.78, 0.55, 0.85, 0.7];
+  return (
+    <div style={{ position: "absolute", inset: 0, padding: "20px 16px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 5 }}>
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${P.indigo}22, transparent 50%)` }} />
+      {bars.map((h, i) => (
+        <div key={i} style={{
+          flex: 1, height: `${h * 100}%`, borderRadius: 4,
+          background: `linear-gradient(180deg, ${P.pinkSoft}, ${P.indigo})`,
+          opacity: 0.55 + h * 0.4,
+          animation: `barRise 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) backwards`,
+          animationDelay: `${i * 0.07}s`,
+          transformOrigin: "bottom",
+        }} />
+      ))}
+      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+        <path d="M 12 70% Q 35% 55%, 50% 45% T 95% 25%" stroke={P.text} strokeWidth="1.2" fill="none" strokeDasharray="3 3" opacity="0.5"/>
+      </svg>
+    </div>
+  );
+}
+
+function BurnoutVisual() {
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 80%, ${P.amber}22, transparent 60%)` }} />
+      <svg width="160" height="100" viewBox="0 0 160 100">
+        <defs>
+          <linearGradient id="burn-grad" x1="0" x2="1">
+            <stop offset="0" stopColor={P.tealSoft}/>
+            <stop offset="0.5" stopColor={P.amber}/>
+            <stop offset="1" stopColor={P.pinkSoft}/>
+          </linearGradient>
+        </defs>
+        <path d="M 15 90 A 65 65 0 0 1 145 90" stroke={P.border} strokeWidth="14" fill="none" strokeLinecap="round"/>
+        <path d="M 15 90 A 65 65 0 0 1 145 90" stroke="url(#burn-grad)" strokeWidth="14" fill="none" strokeLinecap="round" strokeDasharray="204" strokeDashoffset="68"/>
+        <line x1="80" y1="90" x2="120" y2="42" stroke={P.text} strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="80" cy="90" r="6" fill={P.text}/>
+        <circle cx="80" cy="90" r="3" fill={P.bg1}/>
+      </svg>
+      <div style={{
+        position: "absolute", bottom: 14, left: 0, right: 0, textAlign: "center",
+        fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase",
+        color: P.textDim, fontWeight: 600,
+      }}>Moderate</div>
+    </div>
+  );
+}
+
+function TherapistVisual() {
+  const dots = [
+    { x: 22, y: 30, c: P.pink },
+    { x: 65, y: 22, c: P.tealSoft },
+    { x: 80, y: 58, c: P.indigo },
+    { x: 35, y: 70, c: P.amber },
+    { x: 50, y: 45, c: P.pinkSoft },
+  ];
+  return (
+    <div style={{ position: "absolute", inset: 0 }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 30% 30%, ${P.pink}22, transparent 60%)` }} />
+      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+        {dots.slice(0, -1).map((d, i) => {
+          const next = dots[(i + 1) % dots.length];
+          return <line key={i} x1={`${d.x}%`} y1={`${d.y}%`} x2={`${next.x}%`} y2={`${next.y}%`} stroke={P.border} strokeWidth="1" strokeDasharray="2 3"/>;
+        })}
+      </svg>
+      {dots.map((d, i) => (
+        <div key={i} style={{
+          position: "absolute", left: `${d.x}%`, top: `${d.y}%`,
+          width: 26, height: 26, marginLeft: -13, marginTop: -13,
+          borderRadius: "50%",
+          background: `radial-gradient(circle at 30% 30%, #fff, ${d.c})`,
+          boxShadow: `0 0 16px ${d.c}88, 0 0 0 2px ${P.bg1}`,
+          animation: `nodeBob 3s ease-in-out infinite`,
+          animationDelay: `${i * 0.3}s`,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+// ── Feature Card ─────────────────────────────────────────────
+const FEATURES = [
+  { id: "breathe", tag: "Calm", title: "Breathing room", subtitle: "4-7-8, box breath, or just follow the bloom.", accent: P.tealSoft, href: "/breathe" },
+  { id: "report",  tag: "Clarity", title: "Wellbeing report", subtitle: "Weekly patterns, written by Maya.", accent: P.indigo, href: "/report" },
+  { id: "burnout", tag: "Check-in", title: "Burnout check", subtitle: "A 2-minute pulse on how you're really doing.", accent: P.amber, href: "/burnout" },
+  { id: "therapist", tag: "Connect", title: "Find a therapist", subtitle: "Vetted Indian platforms, in your language.", accent: P.pink, href: "/therapist" },
+] as const;
+
+const VISUALS: Record<string, () => React.JSX.Element> = {
+  breathe: BreatheVisual,
+  report: ReportVisual,
+  burnout: BurnoutVisual,
+  therapist: TherapistVisual,
+};
+
+function FeatureCard({ feature, wide }: { feature: typeof FEATURES[number]; wide?: boolean }) {
+  const [hovered, setHovered] = useState(false);
+  const Visual = VISUALS[feature.id];
+  const aspect = wide ? "16/10" : "4/5";
+
+  return (
+    <a href={feature.href} style={{
+      gridColumn: wide ? "span 2" : "span 1",
+      borderRadius: 22, overflow: "hidden",
+      background: P.surface,
+      border: `1px solid ${hovered ? feature.accent : P.border}`,
+      backdropFilter: "blur(20px)",
+      position: "relative",
+      aspectRatio: aspect,
+      display: "flex", flexDirection: "column",
+      cursor: "pointer",
+      textDecoration: "none",
+      transform: hovered ? "translateY(-4px)" : "translateY(0)",
+      transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s",
+    }}
+    onMouseEnter={() => setHovered(true)}
+    onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{
+        flex: 1, position: "relative", overflow: "hidden",
+        background: `linear-gradient(135deg, ${P.bg2}, ${P.bg1})`,
+      }}>
+        <Visual />
+      </div>
+      <div style={{
+        padding: "14px 16px",
+        display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10,
+        borderTop: `1px solid ${P.border}`,
+        background: `linear-gradient(180deg, transparent, ${P.bg0}80)`,
+      }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: feature.accent, fontWeight: 700, marginBottom: 4 }}>{feature.tag}</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: P.text, letterSpacing: "-0.01em", marginBottom: 2 }}>{feature.title}</div>
+          <div style={{ fontSize: 12, color: P.textDim, lineHeight: 1.35 }}>{feature.subtitle}</div>
         </div>
-      </header>
+        <div style={{
+          width: 32, height: 32, borderRadius: "50%",
+          background: P.surface, border: `1px solid ${P.border}`,
+          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M3 9L9 3M9 3H4M9 3v5" stroke={feature.accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+  );
+}
 
-      {/* Daily mood check-in */}
-      <AnimatePresence>
-        {!moodSet && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="shrink-0 bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border-b border-teal-800/30 px-4 py-3 overflow-hidden"
-          >
-            <p className="text-sm text-slate-300 mb-2.5 font-medium">How are you feeling right now?</p>
-            <div className="flex gap-2">
-              {MOODS.map((m) => (
-                <button key={m.score} onClick={() => submitMood(m.score)}
-                  className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-800 transition-colors group">
-                  <span className="text-xl group-hover:scale-125 transition-transform">{m.emoji}</span>
-                  <span className="text-[10px] text-slate-500 group-hover:text-slate-300">{m.label}</span>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+// ── Bottom Nav ────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { id: "home",    label: "Home",    href: "/" },
+  { id: "maya",    label: "Maya",    href: "/friend" },
+  { id: "burnout", label: "Burnout", href: "/burnout" },
+  { id: "breathe", label: "Breathe", href: "/breathe" },
+  { id: "profile", label: "You",     href: "/profile" },
+];
 
-      {/* Chat area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        {isClient && !hasChat ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-xl mx-auto pt-6">
-            <div className="text-center mb-8">
-              <div className="relative inline-flex mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center float shadow-xl shadow-teal-900/40">
-                  <Heart className="w-8 h-8 text-white" fill="white" />
-                </div>
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Hi, I&apos;m AiCoax</h2>
-              <p className="text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
-                A safe space to talk through what you&apos;re feeling. I listen without judgment,
-                help you understand your mind, and share evidence-based coping tools.
-              </p>
-              <p className="text-xs text-slate-600 mt-2 italic">I&apos;m an AI — not a therapist or crisis service</p>
-            </div>
+function NavIcon({ id, color, size = 22 }: { id: string; color: string; size?: number }) {
+  const icons: Record<string, React.ReactNode> = {
+    home:    <path d="M3 11l9-7 9 7v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2v-9z" strokeLinejoin="round" strokeLinecap="round"/>,
+    maya:    <><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8" strokeDasharray="2 3"/></>,
+    burnout: <><path d="M12 2c0 0-4 4-4 8a4 4 0 008 0c0-4-4-8-4-8z" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 12v4M10 18h4" strokeLinecap="round"/></>,
+    breathe: <><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8" opacity="0.4"/></>,
+    profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" strokeLinecap="round"/></>,
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7">
+      {icons[id]}
+    </svg>
+  );
+}
 
-            {/* Maya featured card */}
-            <Link href="/friend"
-              className="block bg-gradient-to-br from-pink-900/40 via-rose-900/30 to-orange-900/30 border border-pink-700/40 rounded-2xl p-4 mb-4 hover:border-pink-500/60 transition-all group">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-xl shadow-lg shadow-pink-900/40 group-hover:scale-105 transition-transform">
-                    🧡
-                  </div>
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-slate-950" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-bold text-white">Talk to Maya</p>
-                    <span className="text-[10px] bg-pink-900/50 border border-pink-700/50 text-pink-300 px-2 py-0.5 rounded-full">New ✨</span>
-                  </div>
-                  <p className="text-xs text-slate-400">Your AI best friend — consoles, motivates, and keeps it real 💙</p>
-                </div>
-                <span className="text-pink-400 text-xl group-hover:translate-x-1 transition-transform">→</span>
-              </div>
-            </Link>
-
-            {/* Quick tools grid */}
-            <div className="grid grid-cols-4 gap-2 mb-8">
-              {NAV.filter(n => n.href !== "/friend").map((n) => (
-                <Link key={n.href} href={n.href}
-                  className="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col items-center gap-1.5 hover:border-slate-600 transition-all group hover:bg-slate-800/50">
-                  <span className={`${n.color} group-hover:scale-110 transition-transform`}>{n.icon}</span>
-                  <span className="text-[10px] text-slate-400 group-hover:text-white transition-colors">{n.label}</span>
-                </Link>
-              ))}
-            </div>
-
-            <p className="text-[11px] text-slate-600 mb-3 text-center uppercase tracking-widest">Or share what&apos;s on your mind</p>
-            <div className="space-y-2">
-              {STARTERS.map((s, i) => (
-                <motion.button key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
-                  onClick={() => send(s)}
-                  className="w-full text-left text-sm text-slate-400 hover:text-white bg-slate-900/50 hover:bg-slate-800 border border-slate-800 hover:border-teal-700/50 rounded-xl px-4 py-3 transition-all flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-teal-500 shrink-0" />{s}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        ) : isClient ? (
-          <div className="max-w-2xl mx-auto space-y-4">
-            {messages.map((m, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} gap-2`}>
-                {m.role === "assistant" && (
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center shrink-0 mt-1 shadow-lg shadow-teal-900/40">
-                    <Heart className="w-3.5 h-3.5 text-white" fill="white" />
-                  </div>
+function BottomNav({ active }: { active: string }) {
+  return (
+    <div style={{ position: "fixed", bottom: 14, left: 14, right: 14, zIndex: 100, pointerEvents: "none" }}>
+      <div style={{ position: "relative", borderRadius: 32, overflow: "hidden", pointerEvents: "auto" }}>
+        {/* glass layers */}
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: 32,
+          backdropFilter: "blur(28px) saturate(180%)",
+          WebkitBackdropFilter: "blur(28px) saturate(180%)",
+          background: "rgba(255,255,255,0.08)",
+        }} />
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: 32,
+          background: "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.06) 100%)",
+        }} />
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: 32,
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.18), 0 12px 32px rgba(0,0,0,0.35)",
+          border: "0.5px solid rgba(255,255,255,0.12)",
+        }} />
+        <div style={{
+          position: "relative", zIndex: 1,
+          display: "flex", alignItems: "center", justifyContent: "space-around",
+          padding: "10px 6px",
+        }}>
+          {NAV_ITEMS.map(it => {
+            const isActive = active === it.id;
+            return (
+              <a key={it.id} href={it.href} style={{
+                background: "none", border: "none", cursor: "pointer",
+                padding: "8px 10px", borderRadius: 22,
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                fontFamily: "inherit", textDecoration: "none",
+                position: "relative",
+              }}>
+                {isActive && (
+                  <div style={{
+                    position: "absolute", inset: 0, borderRadius: 22,
+                    background: `linear-gradient(135deg, ${P.pink}, ${P.pinkSoft})`,
+                    boxShadow: `0 4px 14px ${P.pink}66, inset 0 1px 0 rgba(255,255,255,0.3)`,
+                    zIndex: -1,
+                  }}/>
                 )}
-                <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                  m.role === "user"
-                    ? "bg-teal-600 text-white rounded-tr-sm"
-                    : "bg-slate-800 text-slate-200 rounded-tl-sm"
-                }`}>
-                  {m.content}
-                </div>
-              </motion.div>
-            ))}
-            {loading && messages[messages.length - 1]?.role !== "assistant" && (
-              <div className="flex justify-start gap-2">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center shrink-0">
-                  <Heart className="w-3.5 h-3.5 text-white" fill="white" />
-                </div>
-                <div className="bg-slate-800 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1 items-center">
-                  {[0, 150, 300].map((d) => (
-                    <span key={d} className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
-                  ))}
-                </div>
-              </div>
-            )}
-            <div ref={bottomRef} />
+                <NavIcon id={it.id} color={isActive ? "#fff" : P.textDim} size={21}/>
+                <span style={{
+                  fontSize: 9.5, fontWeight: 600,
+                  color: isActive ? "#fff" : P.textMute,
+                  letterSpacing: "0.02em",
+                }}>{it.label}</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────
+export default function HomePage() {
+  const { user, authReady } = useApp();
+  const router = useRouter();
+  const featuresRef = useRef<HTMLDivElement>(null);
+
+  const name = user?.name?.split(" ")[0] ?? "friend";
+
+  if (!authReady) return null;
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: `
+        radial-gradient(ellipse 100% 50% at 50% 0%, ${P.pink}20, transparent 50%),
+        radial-gradient(ellipse 80% 60% at 80% 110%, ${P.indigo}25, transparent 60%),
+        linear-gradient(180deg, ${P.bg0}, ${P.bg1})
+      `,
+      color: P.text,
+      fontFamily: "var(--font-geist-sans), -apple-system, system-ui, sans-serif",
+      overflowX: "hidden",
+    }}>
+
+      {/* ── HERO ── */}
+      <section style={{
+        minHeight: "100svh",
+        padding: "env(safe-area-inset-top, 60px) 24px 140px",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "space-between",
+        gap: 24,
+      }}>
+        {/* brand badge */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 8,
+          padding: "6px 14px", borderRadius: 999,
+          background: P.surface, border: `1px solid ${P.border}`,
+          backdropFilter: "blur(12px)",
+          fontSize: 11, color: P.textDim,
+          letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: P.tealSoft, boxShadow: `0 0 8px ${P.tealSoft}` }} />
+          AiCoax · home
+        </div>
+
+        {/* Maya orb + greeting */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28 }}>
+          {/* Maya video avatar with orb glow behind */}
+          <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {/* outer breathing glow */}
+            <div style={{
+              position: "absolute", inset: "-55%", borderRadius: "50%",
+              background: `radial-gradient(circle, ${P.pink}55 0%, ${P.pink}22 35%, transparent 70%)`,
+              filter: "blur(20px)",
+              animation: "mayaGlow 4.5s ease-in-out infinite",
+            }} />
+            {/* pulse ring */}
+            <div style={{
+              position: "absolute", inset: "-18%", borderRadius: "50%",
+              border: `1.5px solid ${P.pink}55`,
+              animation: "mayaRing 3s ease-out infinite",
+            }} />
+            <div style={{ animation: "mayaFloat 5.5s ease-in-out infinite", position: "relative", zIndex: 1 }}>
+              <MayaAvatar emotion="happy" speaking={false} size={170} />
+            </div>
           </div>
-        ) : null}
-      </div>
 
-      {/* Ethics strip */}
-      <div className="shrink-0 px-4 py-1.5 bg-amber-950/30 border-t border-amber-900/30">
-        <p className="text-[10px] text-amber-700/70 text-center">
-          AI companion only · Crisis help: <span className="underline cursor-pointer">iCall 9152987821</span> · <span className="underline cursor-pointer">Vandrevala 1860-2662-345</span> · <Link href="/crisis" className="underline">More resources →</Link>
-        </p>
-      </div>
+          <TypedGreeting name={name} />
+        </div>
 
-      {/* Input */}
-      <div className="shrink-0 px-4 pb-4 pt-2 border-t border-slate-800 bg-slate-900/50">
-        <div className="max-w-2xl mx-auto flex gap-2">
-          <input
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-colors"
-            placeholder="Tell me what's on your mind..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
-            disabled={loading}
-            autoFocus
-          />
-          <button onClick={toggleVoice} disabled={loading}
-            title={listening ? "Stop" : "Voice input"}
-            className={`shrink-0 rounded-xl px-3 py-3 transition-colors ${listening ? "bg-red-600 text-white animate-pulse" : "bg-slate-700 hover:bg-slate-600 text-slate-300"}`}>
-            {listening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+        {/* speciality + CTA */}
+        <div style={{ textAlign: "center", maxWidth: 300, display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+          <div style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: P.textMute, fontWeight: 600 }}>
+            Our speciality
+          </div>
+          <div style={{
+            fontFamily: "var(--font-instrument-serif), Georgia, serif",
+            fontSize: 22, lineHeight: 1.25, fontStyle: "italic",
+            color: P.text, letterSpacing: "-0.01em",
+          }}>
+            Your AI best friend<br/>for mental health.
+          </div>
+          <button
+            onClick={() => router.push("/friend")}
+            style={{
+              marginTop: 10, padding: "14px 32px", borderRadius: 999, border: "none",
+              background: `linear-gradient(135deg, ${P.pink} 0%, ${P.pinkSoft} 100%)`,
+              color: "#fff", fontWeight: 600, fontSize: 15,
+              letterSpacing: "-0.01em",
+              boxShadow: `0 8px 24px ${P.pink}55, inset 0 1px 0 rgba(255,255,255,0.3)`,
+              cursor: "pointer", fontFamily: "inherit",
+            }}>
+            Talk to Maya  →
           </button>
-          <button onClick={() => send(input)} disabled={loading || !input.trim()}
-            className="bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white rounded-xl px-4 py-3 transition-colors shrink-0">
-            {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin block" /> : <Send className="w-5 h-5" />}
-          </button>
+        </div>
+
+        {/* scroll cue */}
+        <button
+          onClick={() => featuresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          style={{
+            marginTop: 8, background: "none", border: "none", cursor: "pointer",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+            color: P.textMute, fontFamily: "inherit",
+            animation: "scrollHint 2.4s ease-in-out infinite",
+          }}>
+          <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}>
+            What else
+          </span>
+          <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+            <path d="M10 2v17M3 12l7 7 7-7" stroke={P.textDim} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <div ref={featuresRef} />
+      <div style={{ padding: "40px 24px 22px" }}>
+        <div style={{ fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: P.textMute, fontWeight: 600, marginBottom: 10 }}>
+          And when you need more
+        </div>
+        <div style={{
+          fontFamily: "var(--font-instrument-serif), Georgia, serif",
+          fontSize: 30, lineHeight: 1.1, color: P.text, letterSpacing: "-0.02em",
+        }}>
+          Maya brings <span style={{ fontStyle: "italic", color: P.pink }}>tools</span><br/>
+          for the in-between.
         </div>
       </div>
 
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden shrink-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex items-center justify-around px-2 py-2">
-        {NAV.map((n) => (
-          <Link key={n.href} href={n.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors hover:bg-slate-800">
-            <span className={n.color}>{n.icon}</span>
-            <span className="text-[10px] font-medium text-slate-500">{n.label}</span>
-          </Link>
-        ))}
-      </nav>
+      {/* collage grid: wide, narrow / narrow, wide */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 16px" }}>
+        <FeatureCard feature={FEATURES[0]} wide />
+        <FeatureCard feature={FEATURES[1]} />
+        <FeatureCard feature={FEATURES[2]} />
+        <FeatureCard feature={FEATURES[3]} wide />
+      </div>
+
+      {/* footer */}
+      <div style={{
+        padding: "40px 24px 140px", textAlign: "center",
+        color: P.textMute, fontSize: 11, letterSpacing: "0.18em",
+        textTransform: "uppercase", fontWeight: 600,
+      }}>
+        AiCoax · made with care
+      </div>
+
+      {/* ── BOTTOM NAV ── */}
+      <BottomNav active="home" />
+
+      <style>{`
+        @keyframes caret { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+        @keyframes mayaGlow { 0%,100%{opacity:0.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+        @keyframes mayaRing { 0%{transform:scale(0.92);opacity:0.7} 100%{transform:scale(1.45);opacity:0} }
+        @keyframes mayaFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        @keyframes scrollHint { 0%,100%{transform:translateY(0);opacity:0.55} 50%{transform:translateY(4px);opacity:1} }
+        @keyframes breathePulse { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.15);opacity:0.9} }
+        @keyframes barRise { from{transform:scaleY(0);opacity:0} to{transform:scaleY(1);opacity:1} }
+        @keyframes nodeBob { 0%,100%{transform:translate(0,0)} 50%{transform:translate(0,-3px)} }
+      `}</style>
     </div>
   );
 }

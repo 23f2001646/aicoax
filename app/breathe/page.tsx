@@ -103,7 +103,7 @@ export default function BreathePage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-3 flex items-center gap-3">
         <Link href="/" className="text-slate-400 hover:text-white transition-colors"><ArrowLeft className="w-5 h-5" /></Link>
         <div>
           <h1 className="font-bold text-white">Breathing Exercises</h1>
@@ -111,7 +111,7 @@ export default function BreathePage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Exercise selector */}
         {!running && (
           <div className="space-y-3 mb-8">
@@ -145,38 +145,30 @@ export default function BreathePage() {
 
         {/* Breathing animation */}
         <div className="flex flex-col items-center">
-          <div className="relative flex items-center justify-center mb-8" style={{ width: 240, height: 240 }}>
-            {/* Outer pulse rings */}
-            {running && isInhale && (
-              <>
-                <div className={`absolute w-full h-full rounded-full ${selected.ring} opacity-10 animate-ping`} />
-                <div className={`absolute w-3/4 h-3/4 rounded-full ${selected.ring} opacity-15`} style={{ animation: "ping 1.5s cubic-bezier(0,0,0.2,1) infinite 0.3s" }} />
-              </>
-            )}
-
-            {/* Main breathing circle */}
-            <motion.div
-              className={`rounded-full bg-gradient-to-br ${selected.color} flex flex-col items-center justify-center shadow-2xl`}
-              animate={running ? {
-                width: isHold ? 180 : isInhale ? 220 : 140,
-                height: isHold ? 180 : isInhale ? 220 : 140,
-                opacity: isHold ? 0.85 : 1,
-              } : { width: 160, height: 160 }}
-              transition={{ duration: running && phase ? phase.duration * 0.9 : 0.5, ease: "easeInOut" }}
-            >
-              {running ? (
+          {running && (
+            <div className="relative flex items-center justify-center mb-8" style={{ width: 240, height: 240 }}>
+              {/* Outer pulse rings */}
+              {isInhale && (
                 <>
-                  <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">{phase?.label}</p>
-                  <p className="text-5xl font-black text-white">{timeLeft}</p>
-                  <p className="text-white/60 text-[10px] mt-1 max-w-[100px] text-center leading-tight">{phase?.instruction}</p>
+                  <div className={`absolute w-full h-full rounded-full ${selected.ring} opacity-10 animate-ping`} />
+                  <div className={`absolute w-3/4 h-3/4 rounded-full ${selected.ring} opacity-15`} style={{ animation: "ping 1.5s cubic-bezier(0,0,0.2,1) infinite 0.3s" }} />
                 </>
-              ) : (
-                <p className="text-white/80 text-sm font-medium">Ready</p>
               )}
-            </motion.div>
-
-            {/* Progress ring */}
-            {running && (
+              {/* Main breathing circle */}
+              <motion.div
+                className={`rounded-full bg-gradient-to-br ${selected.color} flex flex-col items-center justify-center shadow-2xl`}
+                animate={{
+                  width: isHold ? 180 : isInhale ? 220 : 140,
+                  height: isHold ? 180 : isInhale ? 220 : 140,
+                  opacity: isHold ? 0.85 : 1,
+                }}
+                transition={{ duration: phase ? phase.duration * 0.9 : 0.5, ease: "easeInOut" }}
+              >
+                <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">{phase?.label}</p>
+                <p className="text-5xl font-black text-white">{timeLeft}</p>
+                <p className="text-white/60 text-[10px] mt-1 max-w-[100px] text-center leading-tight">{phase?.instruction}</p>
+              </motion.div>
+              {/* Progress ring */}
               <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 240 240">
                 <circle cx="120" cy="120" r="115" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
                 <circle cx="120" cy="120" r="115" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="4"
@@ -186,8 +178,8 @@ export default function BreathePage() {
                   style={{ transition: `stroke-dashoffset ${phase?.duration}s linear` }}
                 />
               </svg>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Cycle counter */}
           {running && (
@@ -197,7 +189,7 @@ export default function BreathePage() {
           )}
 
           {/* Controls */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 mt-4">
             {!running ? (
               <motion.button onClick={start} whileTap={{ scale: 0.95 }}
                 className={`bg-gradient-to-r ${selected.color} text-white rounded-2xl px-8 py-4 font-semibold flex items-center gap-2 shadow-lg`}>
