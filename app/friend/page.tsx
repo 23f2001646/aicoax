@@ -7,6 +7,7 @@ import { ArrowLeft, Send, Mic, MicOff, RefreshCw, Volume2, VolumeX, Sparkles, Ph
 import MayaAvatar, { type MayaPose } from "@/components/MayaAvatar";
 import { useApp } from "@/components/AppProviders";
 import { uKey } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 type Emotion = "neutral" | "happy" | "sad" | "excited" | "coaxing" | "thinking" | "blush" | "crying" | "laughing" | "angry" | "hug";
 interface Message { role: "user" | "assistant"; content: string; emotion?: Emotion; }
@@ -83,19 +84,42 @@ export default function FriendPage() {
   const hasGreetedRef  = useRef(false);
   const [playGreeting, setPlayGreeting] = useState(false);
 
-  // Load chat history (per-user)
+  // Load chat history — Supabase first, localStorage fallback
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(chatKey);
-      if (saved) {
-        const parsed: Message[] = JSON.parse(saved);
-        setMessages(parsed);
-        if (parsed.length > 0) setShowStarters(false);
-        const last = [...parsed].reverse().find(m => m.role === "assistant");
-        if (last?.emotion) setEmotion(last.emotion);
-      }
-    } catch {}
-    // Load saved language pref
+    async function loadMessages() {
+      try {
+        if (supabase && user) {
+          const { data } = await supabase
+            .from("chat_messages")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: true })
+            .limit(60);
+          if (data && data.length > 0) {
+            const parsed: Message[] = data.map((r: { role: string; content: string; emotion?: string }) => ({
+              role: r.role as "user" | "assistant",
+              content: r.content,
+              emotion: r.emotion as Emotion | undefined,
+            }));
+            setMessages(parsed);
+            setShowStarters(false);
+            const last = [...parsed].reverse().find(m => m.role === "assistant");
+            if (last?.emotion) setEmotion(last.emotion);
+            return;
+          }
+        }
+        // Fallback: localStorage
+        const saved = localStorage.getItem(chatKey);
+        if (saved) {
+          const parsed: Message[] = JSON.parse(saved);
+          setMessages(parsed);
+          if (parsed.length > 0) setShowStarters(false);
+          const last = [...parsed].reverse().find(m => m.role === "assistant");
+          if (last?.emotion) setEmotion(last.emotion);
+        }
+      } catch {}
+    }
+    loadMessages();
     if (prefs.lang && prefs.lang !== "en") setLang(prefs.lang);
     if (typeof window !== "undefined") window.speechSynthesis?.getVoices();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,10 +165,30 @@ export default function FriendPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, chatKey]);
 
-  // Save chat history (per-user)
+  // Save chat history — Supabase + localStorage
+  const lastSavedCount = useRef(0);
   useEffect(() => {
-    if (messages.length > 0) localStorage.setItem(chatKey, JSON.stringify(messages.slice(-60)));
-  }, [messages, chatKey]);
+    if (messages.length === 0) return;
+    // Always keep localStorage in sync as instant fallback
+    localStorage.setItem(chatKey, JSON.stringify(messages.slice(-60)));
+    // Push only new completed messages to Supabase
+    if (supabase && user && messages.length > lastSavedCount.current) {
+      const newMsgs = messages.slice(lastSavedCount.current);
+      const completed = newMsgs.filter(m => m.content.length > 0);
+      if (completed.length > 0) {
+        supabase.from("chat_messages").insert(
+          completed.map(m => ({
+            user_id: user.id,
+            role: m.role,
+            content: m.content,
+            emotion: m.emotion ?? null,
+          }))
+        ).then(({ error }) => {
+          if (!error) lastSavedCount.current = messages.length;
+        });
+      }
+    }
+  }, [messages, chatKey, user]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -424,7 +468,11 @@ export default function FriendPage() {
     window.speechSynthesis?.cancel();
     setMessages([]); setShowStarters(true);
     setEmotion("neutral"); setSpeaking(false);
+    lastSavedCount.current = 0;
     localStorage.removeItem(chatKey);
+    if (supabase && user) {
+      supabase.from("chat_messages").delete().eq("user_id", user.id).then(() => {});
+    }
   };
 
   const toggleVoice = () => {
