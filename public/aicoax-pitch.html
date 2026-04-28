@@ -1,769 +1,562 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AiCoax — Pitch Deck</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AiCoax — AI Mental Wellness Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#08000f;font-family:'Inter',sans-serif;overflow:hidden;user-select:none}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── SHELL ─────────────────────────────── */
+#deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .65s ease}
+.slide.active{opacity:1;pointer-events:all}
+.si{width:1280px;max-width:100vw;height:720px;max-height:100vh;position:relative;overflow:hidden}
 
-  :root {
-    --teal: #2dd4bf;
-    --teal-dim: #0d9488;
-    --purple: #a78bfa;
-    --rose: #fb7185;
-    --slate-950: #020617;
-    --slate-900: #0f172a;
-    --slate-800: #1e293b;
-    --slate-700: #334155;
-    --slate-400: #94a3b8;
-    --slate-300: #cbd5e1;
-    --white: #f8fafc;
-  }
+/* ── NAV DOTS ───────────────────────────── */
+#nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:200}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(249,168,212,.28);cursor:pointer;transition:all .3s}
+.dot.on{background:#f9a8d4;width:22px;border-radius:4px}
+.arr{position:fixed;top:50%;transform:translateY(-50%);background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);color:#f9a8d4;font-size:20px;width:42px;height:42px;border-radius:50%;cursor:pointer;z-index:200;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(12px)}
+.arr:hover{background:rgba(249,168,212,.22);transform:translateY(-50%) scale(1.05)}
+#pv{left:14px}#nx{right:14px}
+#ctr{position:fixed;top:18px;right:22px;color:rgba(249,168,212,.4);font-size:12px;z-index:200;letter-spacing:.08em}
+#stit{position:fixed;top:18px;left:22px;color:rgba(249,168,212,.35);font-size:11px;z-index:200;letter-spacing:.12em;text-transform:uppercase}
 
-  html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--slate-950); color: var(--white); }
+/* ── SHARED TOKENS ──────────────────────── */
+.stag{color:#f9a8d4;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.stag-t{color:#14b8a6;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.stag-v{color:#a78bfa;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.serif{font-family:'Playfair Display',serif}
 
-  /* ── Slideshow ── */
-  .deck { width: 100vw; height: 100vh; position: relative; }
+/* ── FADE-UP ANIM ───────────────────────── */
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.slide.active .a{animation:up .55s ease forwards;opacity:0}
+.slide.active .a:nth-child(1){animation-delay:.06s}
+.slide.active .a:nth-child(2){animation-delay:.16s}
+.slide.active .a:nth-child(3){animation-delay:.26s}
+.slide.active .a:nth-child(4){animation-delay:.36s}
+.slide.active .a:nth-child(5){animation-delay:.45s}
+.slide.active .a:nth-child(6){animation-delay:.53s}
+.slide.active .a:nth-child(7){animation-delay:.60s}
 
-  .slide {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 60px 80px;
-    opacity: 0; pointer-events: none;
-    transform: translateX(60px);
-    transition: opacity 0.45s ease, transform 0.45s ease;
-  }
-  .slide.active {
-    opacity: 1; pointer-events: all; transform: translateX(0);
-  }
-  .slide.exit {
-    opacity: 0; transform: translateX(-60px);
-  }
+/* ══════════════════════════════════════════
+   S1 · HERO
+══════════════════════════════════════════ */
+#s1 .si{background:linear-gradient(135deg,#0c0118 0%,#19052e 48%,#0e021e 100%)}
+#s1 .stars{position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 7% 16%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 22% 58%,rgba(255,255,255,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 65% 11%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 70%,rgba(255,255,255,.28) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 48% 83%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(2px 2px at 14% 76%,rgba(249,168,212,.32) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 91% 27%,rgba(167,139,250,.38) 0%,transparent 100%),
+    radial-gradient(1px 1px at 38% 38%,rgba(255,255,255,.22) 0%,transparent 100%),
+    radial-gradient(1px 1px at 58% 52%,rgba(249,168,212,.18) 0%,transparent 100%)}
+#s1 .o{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+#s1 .o1{width:540px;height:540px;background:rgba(190,24,93,.17);top:-130px;right:-70px}
+#s1 .o2{width:400px;height:400px;background:rgba(167,139,250,.12);bottom:-90px;left:-70px}
+#s1 .o3{width:260px;height:260px;background:rgba(249,168,212,.07);top:50%;left:38%;transform:translate(-50%,-50%)}
+#s1 .maya{position:absolute;right:44px;bottom:0;height:95%;object-fit:contain;filter:drop-shadow(0 0 60px rgba(249,168,212,.4)) drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+#s1 .ct{position:absolute;left:68px;top:50%;transform:translateY(-50%);max-width:550px}
+#s1 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.22);border-radius:100px;padding:7px 18px;margin-bottom:28px;color:#f9a8d4;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+#s1 h1{font-family:'Playfair Display',serif;font-size:78px;line-height:1.02;color:#fdf6f9;margin-bottom:6px}
+#s1 h1 em{color:#f9a8d4;font-style:italic}
+#s1 .sub{font-size:18px;color:rgba(253,246,249,.58);line-height:1.68;margin-bottom:36px;font-weight:300}
+#s1 .pills{display:flex;gap:14px}
+#s1 .pp{padding:12px 28px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer}
+#s1 .p1{background:linear-gradient(135deg,#be185d,#9333ea);color:#fff;box-shadow:0 4px 28px rgba(190,24,93,.45)}
+#s1 .p2{background:rgba(249,168,212,.08);border:1px solid rgba(249,168,212,.28);color:#f9a8d4}
+#s1 .ml{position:absolute;right:200px;bottom:32px;color:rgba(249,168,212,.5);font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+#s1 .ml::before{content:'';width:24px;height:1px;background:rgba(249,168,212,.32)}
+/* aicoax wordmark */
+#s1 .wm{position:absolute;top:28px;left:68px;font-family:'Playfair Display',serif;font-size:22px;color:#fdf6f9;letter-spacing:-.01em}
+#s1 .wm span{color:#f9a8d4;font-style:italic}
 
-  /* ── Navigation ── */
-  .nav {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 16px; z-index: 100;
-    background: rgba(15,23,42,0.85); backdrop-filter: blur(12px);
-    border: 1px solid rgba(148,163,184,0.12);
-    border-radius: 999px; padding: 10px 20px;
-  }
-  .nav button {
-    background: none; border: none; color: var(--slate-400); cursor: pointer;
-    font-size: 18px; padding: 4px 10px; border-radius: 8px;
-    transition: color 0.2s, background 0.2s;
-  }
-  .nav button:hover { color: var(--white); background: rgba(148,163,184,0.1); }
-  .nav button.disabled { opacity: 0.25; cursor: default; }
-  .slide-count { color: var(--slate-400); font-size: 13px; min-width: 56px; text-align: center; }
+/* ══════════════════════════════════════════
+   S2 · PROBLEM
+══════════════════════════════════════════ */
+#s2 .si{background:linear-gradient(160deg,#060010 0%,#110420 55%,#09011a 100%);display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 68px;gap:52px}
+#s2 .bar{width:44px;height:3px;background:linear-gradient(90deg,#be185d,#a78bfa);border-radius:2px;margin-bottom:20px}
+#s2 h2{font-family:'Playfair Display',serif;font-size:44px;color:#fdf6f9;line-height:1.18;margin-bottom:16px}
+#s2 h2 em{color:#f9a8d4;font-style:italic}
+#s2 .desc{color:rgba(253,246,249,.55);font-size:15px;line-height:1.72}
+#s2 .stats{display:flex;flex-direction:column;gap:16px}
+#s2 .sc{background:rgba(249,168,212,.055);border:1px solid rgba(249,168,212,.13);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden}
+#s2 .sc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#be185d,#9333ea)}
+#s2 .sc .n{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;color:#f9a8d4;min-width:90px}
+#s2 .sc .l{color:rgba(253,246,249,.62);font-size:14px;line-height:1.55}
 
-  .dots { display: flex; gap: 6px; }
-  .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--slate-700); cursor: pointer; transition: background 0.2s, transform 0.2s;
-  }
-  .dot.active { background: var(--teal); transform: scale(1.4); }
+/* ══════════════════════════════════════════
+   S3 · MEET MAYA
+══════════════════════════════════════════ */
+#s3 .si{background:linear-gradient(135deg,#0f0220 0%,#19092c 50%,#0f0218 100%);display:flex}
+#s3 .lp{width:38%;background:rgba(249,168,212,.04);border-right:1px solid rgba(249,168,212,.1);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden;position:relative}
+#s3 .lp::before{content:'';position:absolute;top:0;left:0;right:0;height:180px;background:linear-gradient(180deg,rgba(190,24,93,.14),transparent)}
+#s3 .lp::after{content:'Maya';position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(249,168,212,.45);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+#s3 .mf{height:93%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 0 60px rgba(249,168,212,.32))}
+#s3 .rp{flex:1;padding:52px 48px;display:flex;flex-direction:column;justify-content:center}
+#s3 h2{font-family:'Playfair Display',serif;font-size:48px;color:#fdf6f9;line-height:1.14;margin-bottom:24px}
+#s3 h2 em{color:#f9a8d4;font-style:italic}
+#s3 .trs{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+#s3 .tr{display:flex;align-items:flex-start;gap:14px;background:rgba(249,168,212,.05);border:1px solid rgba(249,168,212,.1);border-radius:14px;padding:14px 16px}
+#s3 .ti{font-size:24px;flex-shrink:0;margin-top:1px}
+#s3 .tt{color:#fdf6f9;font-weight:600;font-size:14px;margin-bottom:3px}
+#s3 .td{color:rgba(253,246,249,.5);font-size:12px;line-height:1.5}
+#s3 .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+#s3 .clbl{color:rgba(249,168,212,.5);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:9px}
+#s3 .chip{padding:6px 14px;border-radius:100px;font-size:12px;border:1px solid rgba(249,168,212,.2);color:#f9a8d4;background:rgba(249,168,212,.07)}
 
-  /* ── Keyboard hint ── */
-  .hint {
-    position: fixed; top: 20px; right: 24px; font-size: 11px; color: var(--slate-700);
-  }
+/* ══════════════════════════════════════════
+   S4 · FEATURES
+══════════════════════════════════════════ */
+#s4 .si{background:linear-gradient(135deg,#07001a 0%,#130430 52%,#07001a 100%);padding:48px 64px;display:flex;flex-direction:column}
+#s4 h2{font-family:'Playfair Display',serif;font-size:40px;color:#fdf6f9;margin-bottom:32px}
+#s4 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1}
+#s4 .fc{background:rgba(249,168,212,.05);border:1px solid rgba(249,168,212,.1);border-radius:18px;padding:24px 20px;position:relative;overflow:hidden;transition:all .3s}
+#s4 .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(249,168,212,.45),transparent)}
+#s4 .fc.hi{background:linear-gradient(135deg,rgba(190,24,93,.14),rgba(147,51,234,.1));border-color:rgba(249,168,212,.26)}
+#s4 .fi{font-size:32px;margin-bottom:10px;display:block}
+#s4 .fn2{color:#fdf6f9;font-weight:600;font-size:14px;margin-bottom:6px}
+#s4 .fd{color:rgba(253,246,249,.5);font-size:12px;line-height:1.6}
+#s4 .badge-new{position:absolute;top:14px;right:14px;background:rgba(190,24,93,.3);border:1px solid rgba(249,168,212,.25);border-radius:100px;padding:3px 10px;color:#f9a8d4;font-size:10px;font-weight:600;letter-spacing:.06em}
 
-  /* ── Slide number badge ── */
-  .slide-badge {
-    position: fixed; top: 20px; left: 24px;
-    font-size: 11px; color: var(--slate-700);
-    letter-spacing: 0.06em;
-  }
+/* ══════════════════════════════════════════
+   S5 · SCREENSHOTS / UI
+══════════════════════════════════════════ */
+#s5 .si{background:linear-gradient(160deg,#060010 0%,#10041f 50%,#07001a 100%);padding:52px 64px;display:flex;flex-direction:column}
+#s5 h2{font-family:'Playfair Display',serif;font-size:40px;color:#fdf6f9;margin-bottom:36px}
+#s5 .screens{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px;flex:1}
+#s5 .screen{border-radius:16px;overflow:hidden;border:1px solid rgba(249,168,212,.15);position:relative;background:#0a0118}
+#s5 .screen .hd{background:rgba(249,168,212,.08);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(249,168,212,.1)}
+#s5 .dot3{display:flex;gap:5px}
+#s5 .dot3 span{width:8px;height:8px;border-radius:50%}
+#s5 .screen-body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+/* chat bubbles mock */
+#s5 .cb-maya{background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.15);border-radius:12px 12px 12px 4px;padding:10px 14px;font-size:12px;color:rgba(253,246,249,.8);line-height:1.5;max-width:80%;display:flex;gap:8px;align-items:flex-start}
+#s5 .cb-user{background:linear-gradient(135deg,rgba(190,24,93,.4),rgba(124,58,237,.3));border:1px solid rgba(249,168,212,.2);border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:12px;color:#fdf6f9;line-height:1.5;max-width:76%;margin-left:auto}
+#s5 .screen-title{font-size:11px;color:rgba(249,168,212,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+#s5 .sm-card{background:rgba(249,168,212,.07);border:1px solid rgba(249,168,212,.12);border-radius:12px;padding:12px}
+#s5 .mood-bar{height:6px;border-radius:3px;background:linear-gradient(90deg,#be185d,#9333ea,#14b8a6);margin-top:6px}
+/* voice mode mock */
+#s5 .voice-ring{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#be185d,#9333ea);margin:12px auto;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 0 10px rgba(190,24,93,.2),0 0 0 20px rgba(190,24,93,.08)}
 
-  /* ── Common layout helpers ── */
-  .center { text-align: center; }
-  .col { display: flex; flex-direction: column; }
-  .row { display: flex; align-items: center; }
-  .gap-sm { gap: 12px; }
-  .gap-md { gap: 24px; }
-  .gap-lg { gap: 40px; }
-  .w-full { width: 100%; }
-  .max-w-lg { max-width: 780px; }
-  .max-w-xl { max-width: 960px; }
-  .mx-auto { margin: 0 auto; }
+/* ══════════════════════════════════════════
+   S6 · HOW IT WORKS
+══════════════════════════════════════════ */
+#s6 .si{background:radial-gradient(ellipse at center,#1a0530 0%,#05000e 68%);padding:52px 64px;display:flex;flex-direction:column}
+#s6 h2{font-family:'Playfair Display',serif;font-size:40px;color:#fdf6f9;margin-bottom:40px}
+#s6 .steps{display:flex;align-items:flex-start;flex:1;gap:0}
+#s6 .step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+#s6 .step:not(:last-child)::after{content:'';position:absolute;top:28px;left:57%;right:-43%;height:2px;background:linear-gradient(90deg,rgba(167,139,250,.5),rgba(249,168,212,.2))}
+#s6 .sn{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#7c3aed,#be185d);color:#fff;font-size:20px;font-weight:700;margin-bottom:18px;position:relative;z-index:1;box-shadow:0 0 28px rgba(124,58,237,.42)}
+#s6 .si2{font-size:28px;margin-bottom:10px}
+#s6 .st{color:#fdf6f9;font-weight:600;font-size:15px;margin-bottom:7px}
+#s6 .sd{color:rgba(253,246,249,.5);font-size:13px;line-height:1.6;max-width:170px}
+#s6 .maya-quote{display:flex;align-items:center;gap:18px;background:rgba(249,168,212,.07);border:1px solid rgba(249,168,212,.13);border-radius:18px;padding:20px 26px;margin-top:36px}
+#s6 .qb{background:linear-gradient(135deg,rgba(190,24,93,.26),rgba(124,58,237,.18));border:1px solid rgba(249,168,212,.17);border-radius:14px;padding:14px 20px 14px 30px;color:#fdf6f9;font-size:14px;font-style:italic;flex:1;position:relative}
+#s6 .qb::before{content:'"';font-size:30px;color:rgba(249,168,212,.35);position:absolute;top:3px;left:10px;font-family:'Playfair Display',serif}
+#s6 .qa{font-size:36px}
 
-  /* ── Typography ── */
-  .tag { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
-  .h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 900; line-height: 1.05; }
-  .h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.1; }
-  .h3 { font-size: clamp(20px, 2.5vw, 32px); font-weight: 700; line-height: 1.2; }
-  .body { font-size: clamp(14px, 1.5vw, 18px); color: var(--slate-400); line-height: 1.7; }
-  .small { font-size: 13px; color: var(--slate-400); }
-  .accent-teal { color: var(--teal); }
-  .accent-purple { color: var(--purple); }
-  .accent-rose { color: var(--rose); }
+/* ══════════════════════════════════════════
+   S7 · TECH STACK
+══════════════════════════════════════════ */
+#s7 .si{background:linear-gradient(160deg,#05000e 0%,#0d001e 50%,#12002e 100%);padding:52px 64px;display:flex;flex-direction:column}
+#s7 h2{font-family:'Playfair Display',serif;font-size:40px;color:#fdf6f9;margin-bottom:36px}
+#s7 .tg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+#s7 .tc{background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.14);border-radius:16px;padding:20px 16px;text-align:center;position:relative;overflow:hidden}
+#s7 .tc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(20,184,166,.5),transparent)}
+#s7 .tci{font-size:32px;margin-bottom:8px}
+#s7 .tcn{color:#fdf6f9;font-weight:600;font-size:13px;margin-bottom:3px}
+#s7 .tcr{color:rgba(20,184,166,.8);font-size:11px}
+#s7 .ab{background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.13);border-radius:14px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+#s7 .ai{text-align:center;flex:1}
+#s7 .al{color:rgba(20,184,166,.7);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+#s7 .av{color:#fdf6f9;font-size:14px;font-weight:500}
+#s7 .as{color:rgba(20,184,166,.28);font-size:18px}
+#s7 .tlabel{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.14);border-radius:14px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between}
+#s7 .tl{color:rgba(167,139,250,.7);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+#s7 .tv{color:#fdf6f9;font-size:13px;font-weight:500}
 
-  /* ── Cards ── */
-  .card {
-    background: var(--slate-900);
-    border: 1px solid rgba(148,163,184,0.1);
-    border-radius: 20px;
-    padding: 28px 32px;
-  }
-  .card-sm { padding: 20px 24px; border-radius: 16px; }
-  .card-highlight { border-color: rgba(45,212,191,0.25); background: rgba(13,148,136,0.08); }
+/* ══════════════════════════════════════════
+   S8 · VISION & IMPACT
+══════════════════════════════════════════ */
+#s8 .si{background:linear-gradient(135deg,#0c0118 0%,#190430 45%,#0e021e 100%);display:grid;grid-template-columns:1fr 1fr}
+#s8 .lft{padding:56px 48px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(249,168,212,.1)}
+#s8 h2{font-family:'Playfair Display',serif;font-size:42px;color:#fdf6f9;line-height:1.15;margin-bottom:24px}
+#s8 h2 em{color:#f9a8d4;font-style:italic}
+#s8 .il{display:flex;flex-direction:column;gap:13px;margin-bottom:30px}
+#s8 .ii{display:flex;align-items:flex-start;gap:12px}
+#s8 .id{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#be185d,#a78bfa);flex-shrink:0;margin-top:6px}
+#s8 .it{color:rgba(253,246,249,.7);font-size:14px;line-height:1.5}
+#s8 .rgt{padding:56px 48px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+#s8 .mc{background:rgba(249,168,212,.07);border:1px solid rgba(249,168,212,.13);border-radius:18px;padding:20px 24px;display:flex;align-items:center;gap:16px}
+#s8 .mv{font-family:'Playfair Display',serif;font-size:44px;font-weight:700;color:#f9a8d4;min-width:100px}
+#s8 .ml2{color:rgba(253,246,249,.55);font-size:13px;line-height:1.55}
 
-  /* ── Grid ── */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-
-  /* ── Decorative ── */
-  .glow-teal { box-shadow: 0 0 60px rgba(45,212,191,0.15); }
-  .glow-purple { box-shadow: 0 0 60px rgba(167,139,250,0.15); }
-  .pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 13px; font-weight: 500; padding: 5px 14px;
-    border-radius: 999px; border: 1px solid rgba(148,163,184,0.15);
-    background: var(--slate-800); color: var(--slate-300);
-  }
-  .pill-teal { border-color: rgba(45,212,191,0.3); background: rgba(13,148,136,0.12); color: var(--teal); }
-  .pill-purple { border-color: rgba(167,139,250,0.3); background: rgba(124,58,237,0.12); color: var(--purple); }
-
-  .divider { width: 48px; height: 3px; border-radius: 2px; background: var(--teal); margin: 16px 0; }
-  .divider-center { margin: 16px auto; }
-
-  /* ── Stat box ── */
-  .stat-val { font-size: clamp(36px, 5vw, 60px); font-weight: 900; line-height: 1; }
-  .stat-label { font-size: 13px; color: var(--slate-400); margin-top: 6px; }
-
-  /* ── Progress bar ── */
-  .progress-bar {
-    height: 6px; border-radius: 3px; background: var(--slate-800);
-    overflow: hidden; margin-top: 8px;
-  }
-  .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--purple)); }
-
-  /* ── Feature icon ── */
-  .feat-icon { font-size: 36px; margin-bottom: 12px; }
-
-  /* ── Quote ── */
-  .quote {
-    font-size: clamp(18px, 2.5vw, 26px); font-weight: 600; line-height: 1.5;
-    font-style: italic; color: var(--slate-300);
-    border-left: 3px solid var(--teal); padding-left: 24px;
-  }
-
-  /* ── Timeline ── */
-  .timeline-item { display: flex; gap: 16px; align-items: flex-start; }
-  .timeline-dot {
-    width: 12px; height: 12px; border-radius: 50%; background: var(--teal);
-    margin-top: 4px; flex-shrink: 0; box-shadow: 0 0 8px rgba(45,212,191,0.5);
-  }
-
-  /* ── Slides background variations ── */
-  .bg-gradient-hero {
-    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(13,148,136,0.2) 0%, transparent 60%),
-                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(124,58,237,0.12) 0%, transparent 50%),
-                var(--slate-950);
-  }
-  .bg-gradient-problem {
-    background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(239,68,68,0.08) 0%, transparent 60%),
-                var(--slate-950);
-  }
-  .bg-gradient-solution {
-    background: radial-gradient(ellipse 70% 60% at 70% 50%, rgba(45,212,191,0.1) 0%, transparent 60%),
-                var(--slate-950);
-  }
-  .bg-gradient-tech {
-    background: radial-gradient(ellipse 70% 60% at 20% 50%, rgba(167,139,250,0.1) 0%, transparent 60%),
-                var(--slate-950);
-  }
-
-  /* ── Emoji avatar ── */
-  .avatar-row { display: flex; gap: 20px; justify-content: center; }
-  .avatar {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    background: var(--slate-900); border: 1px solid rgba(148,163,184,0.1);
-    border-radius: 16px; padding: 20px 24px; min-width: 110px;
-  }
-  .avatar span:first-child { font-size: 36px; }
-  .avatar-name { font-size: 13px; font-weight: 600; }
-  .avatar-role { font-size: 11px; color: var(--slate-400); }
-
-  /* ── SLIDE-SPECIFIC ── */
-
-  /* S1 Hero */
-  .hero-logo { font-size: 80px; margin-bottom: 8px; filter: drop-shadow(0 0 30px rgba(45,212,191,0.4)); }
-  .hero-tagline { font-size: clamp(14px, 1.6vw, 18px); color: var(--slate-400); margin-top: 16px; max-width: 560px; text-align: center; line-height: 1.6; }
-  .hero-pills { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
-
-  /* S7 Maya */
-  .maya-expression { font-size: 52px; }
-  .expression-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .exp-card {
-    background: var(--slate-900); border: 1px solid rgba(148,163,184,0.08);
-    border-radius: 14px; padding: 14px 10px; text-align: center;
-  }
-  .exp-emoji { font-size: 28px; }
-  .exp-label { font-size: 11px; color: var(--slate-400); margin-top: 6px; }
-
+/* ══════════════════════════════════════════
+   S9 · CTA
+══════════════════════════════════════════ */
+#s9 .si{background:linear-gradient(135deg,#0c0118 0%,#19052e 50%,#0e021e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s9 .bo1{position:absolute;width:620px;height:620px;background:rgba(190,24,93,.11);border-radius:50%;filter:blur(100px);top:50%;left:50%;transform:translate(-50%,-50%)}
+#s9 .bo2{position:absolute;width:380px;height:380px;background:rgba(167,139,250,.09);border-radius:50%;filter:blur(80px);top:10%;right:5%}
+#s9 .maya-s{position:absolute;right:32px;bottom:0;height:84%;object-fit:contain;filter:drop-shadow(0 0 40px rgba(249,168,212,.32));opacity:.9}
+#s9 .cnt{position:relative;z-index:1;max-width:640px}
+#s9 .hts{font-size:24px;margin-bottom:12px;letter-spacing:.12em}
+#s9 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);border-radius:100px;padding:7px 18px;margin-bottom:24px;color:#f9a8d4;font-size:11px;letter-spacing:.1em}
+#s9 h2{font-family:'Playfair Display',serif;font-size:58px;color:#fdf6f9;line-height:1.1;margin-bottom:18px}
+#s9 h2 span{color:#f9a8d4;font-style:italic}
+#s9 p{color:rgba(253,246,249,.55);font-size:17px;line-height:1.68;margin-bottom:36px;font-weight:300}
+#s9 .btns{display:flex;gap:14px;justify-content:center;margin-bottom:36px}
+#s9 .bm{padding:15px 36px;border-radius:100px;background:linear-gradient(135deg,#be185d,#9333ea);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;box-shadow:0 4px 32px rgba(190,24,93,.42)}
+#s9 .bg2{padding:15px 36px;border-radius:100px;background:transparent;border:1px solid rgba(249,168,212,.3);color:#f9a8d4;font-size:15px;font-weight:500;cursor:pointer}
+#s9 .fn{color:rgba(249,168,212,.35);font-size:11px;letter-spacing:.06em}
+#s9 .social{display:flex;gap:16px;justify-content:center;margin-top:20px}
+#s9 .si-item{color:rgba(249,168,212,.4);font-size:12px;letter-spacing:.06em;padding:4px 12px;border:1px solid rgba(249,168,212,.15);border-radius:100px}
 </style>
 </head>
 <body>
+<div id="deck">
 
-<div class="slide-badge" id="slideBadge">AiCoax · 2025</div>
-<div class="hint">← → or click to navigate</div>
-
-<div class="deck" id="deck">
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 1 · HERO -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide bg-gradient-hero center active" id="s1">
-    <div class="hero-logo">🌿</div>
-    <div class="h1">AiCoax</div>
-    <div class="hero-tagline">
-      An evidence-based AI mental health companion — combining warm emotional support, CBT tools, mood tracking, and personalised care, all in one beautiful app.
+<!-- ══ S1 HERO ══ -->
+<div class="slide active" id="s1">
+  <div class="si">
+    <div class="stars"></div>
+    <div class="o o1"></div><div class="o o2"></div><div class="o o3"></div>
+    <div class="wm">Ai<span>Coax</span></div>
+    <img class="maya" src="avatars/happy.png" alt="Maya"
+         onerror="this.src='avatars/neutral.png';this.onerror=null"/>
+    <div class="ct">
+      <div class="badge a">✦ &nbsp;AI Mental Wellness Companion</div>
+      <h1 class="a">Meet <em>AiCoax</em></h1>
+      <p class="sub a">Your personal AI companion who listens,<br/>understands, and walks with you — always.</p>
+      <div class="pills a">
+        <div class="pp p1">Explore AiCoax →</div>
+        <div class="pp p2">Watch Demo</div>
+      </div>
     </div>
-    <div class="hero-pills" style="margin-top:28px;">
-      <span class="pill pill-teal">🤖 Powered by Claude Sonnet</span>
-      <span class="pill pill-purple">🌍 19 Languages</span>
-      <span class="pill">🎭 Anime Avatar · Maya</span>
-      <span class="pill">🔒 Privacy-First</span>
+    <div class="ml">Maya · Your AI Companion</div>
+  </div>
+</div>
+
+<!-- ══ S2 PROBLEM ══ -->
+<div class="slide" id="s2">
+  <div class="si">
+    <div class="a">
+      <div class="bar"></div>
+      <div class="stag">The Problem</div>
+      <h2>Mental health is a <em>crisis</em><br/>hiding in plain sight</h2>
+      <p class="desc" style="margin-top:14px">Millions struggle daily — but stigma, cost &amp; waitlists keep real support out of reach. People suffer in silence when they need someone most.</p>
     </div>
-    <div style="margin-top: 36px; display: flex; gap: 40px; justify-content: center;">
-      <div>
-        <div class="stat-val accent-teal">8+</div>
-        <div class="stat-label">Core features</div>
-      </div>
-      <div>
-        <div class="stat-val accent-purple">19</div>
-        <div class="stat-label">Languages</div>
-      </div>
-      <div>
-        <div class="stat-val accent-rose">10</div>
-        <div class="stat-label">Emotions</div>
-      </div>
+    <div class="stats a">
+      <div class="sc"><div class="n">1 in 5</div><div class="l">Indians experience a mental health condition — yet <strong style="color:#f9a8d4">80% never seek help</strong></div></div>
+      <div class="sc"><div class="n">₹2500+</div><div class="l">Average therapy session cost — unaffordable for most students &amp; young professionals</div></div>
+      <div class="sc"><div class="n">6 wks</div><div class="l">Average wait time to see a therapist — far too long for someone in distress right now</div></div>
     </div>
   </div>
+</div>
 
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 2 · THE PROBLEM -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide bg-gradient-problem" id="s2">
-    <div class="max-w-xl w-full">
-      <div class="tag">The Problem</div>
-      <div class="h2" style="margin-bottom:8px;">Mental health is in crisis —<br/><span class="accent-rose">and help is out of reach</span></div>
-      <div class="divider"></div>
-      <div class="grid-2" style="margin-top:32px; gap:20px;">
-        <div class="card" style="border-color:rgba(251,113,133,0.2); background:rgba(239,68,68,0.06);">
-          <div class="stat-val accent-rose">1 in 5</div>
-          <div class="stat-label" style="margin-top:8px;">Indians experience a mental health condition annually</div>
-        </div>
-        <div class="card" style="border-color:rgba(251,113,133,0.2); background:rgba(239,68,68,0.06);">
-          <div class="stat-val accent-rose">80%</div>
-          <div class="stat-label" style="margin-top:8px;">receive no treatment — stigma, cost, availability</div>
-        </div>
-        <div class="card" style="border-color:rgba(251,113,133,0.2); background:rgba(239,68,68,0.06);">
-          <div class="stat-val accent-rose">₹5,000+</div>
-          <div class="stat-label" style="margin-top:8px;">per session — therapy is unaffordable for most</div>
-        </div>
-        <div class="card" style="border-color:rgba(251,113,133,0.2); background:rgba(239,68,68,0.06);">
-          <div class="stat-val accent-rose">3 months</div>
-          <div class="stat-label" style="margin-top:8px;">average wait time for a therapist appointment</div>
-        </div>
+<!-- ══ S3 MEET MAYA ══ -->
+<div class="slide" id="s3">
+  <div class="si">
+    <div class="lp">
+      <img class="mf" src="avatars/happy.png" alt="Maya"
+           onerror="this.src='avatars/neutral.png';this.onerror=null"/>
+    </div>
+    <div class="rp">
+      <div class="stag a">Your companion</div>
+      <h2 class="a">Meet <em>Maya</em><br/>She actually gets you</h2>
+      <div class="trs a">
+        <div class="tr"><div class="ti">💜</div><div><div class="tt">Emotionally Intelligent</div><div class="td">Reads your mood, detects distress, adjusts tone in real-time — like a friend who truly listens.</div></div></div>
+        <div class="tr"><div class="ti">🎙️</div><div><div class="tt">Voice-First Conversations</div><div class="td">Full voice call mode — talk naturally, no typing needed. Just speak your heart.</div></div></div>
+        <div class="tr"><div class="ti">🌍</div><div><div class="tt">Speaks Your Language</div><div class="td">Hindi, Tamil, Telugu, Bengali and 16+ languages — comfort in your mother tongue.</div></div></div>
+        <div class="tr"><div class="ti">🧠</div><div><div class="tt">Powered by Claude AI</div><div class="td">Anthropic's Claude Sonnet — one of the world's most advanced AI models.</div></div></div>
       </div>
-      <div class="card" style="margin-top:20px; background: rgba(239,68,68,0.04); border-color: rgba(251,113,133,0.15);">
-        <div class="quote" style="font-size:15px; font-style:normal; border-color: var(--rose); color: var(--slate-400);">
-          "Gen Z and millennials are the most anxious generation in history — yet the mental health system wasn't built for them."
+      <div class="a">
+        <div class="clbl">Choose Maya's tone</div>
+        <div class="chip-row">
+          <div class="chip">🌸 Gentle</div>
+          <div class="chip">🎯 Direct</div>
+          <div class="chip">✨ Fun</div>
+          <div class="chip">🔥 Motivational</div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 3 · OUR SOLUTION -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide bg-gradient-solution" id="s3">
-    <div class="max-w-xl w-full">
-      <div class="tag">Our Solution</div>
-      <div class="h2">Meet <span class="accent-teal">AiCoax</span> —<br/>your always-available companion</div>
-      <div class="divider"></div>
-      <div class="grid-3" style="margin-top:32px;">
-        <div class="card card-sm text-center glow-teal" style="border-color:rgba(45,212,191,0.2);">
-          <div class="feat-icon">🧡</div>
-          <div style="font-weight:700; margin-bottom:6px;">Maya AI Friend</div>
-          <div class="small">Warm, funny, 10-emotion anime companion. Talks like your best friend, not a bot.</div>
+<!-- ══ S4 FEATURES ══ -->
+<div class="slide" id="s4">
+  <div class="si">
+    <div class="stag a">Everything you need</div>
+    <h2 class="a">A complete wellbeing ecosystem</h2>
+    <div class="grid a">
+      <div class="fc hi">
+        <div class="badge-new">CORE</div>
+        <span class="fi">🤗</span>
+        <div class="fn2">Talk to Maya</div>
+        <div class="fd">24/7 AI companion with emotional intelligence, voice mode &amp; personalised responses in your language.</div>
+      </div>
+      <div class="fc">
+        <span class="fi">📊</span>
+        <div class="fn2">Mood Tracking</div>
+        <div class="fd">Daily check-ins with beautiful charts. Spot patterns, triggers &amp; growth over time.</div>
+      </div>
+      <div class="fc">
+        <span class="fi">🔥</span>
+        <div class="fn2">Burnout Compass</div>
+        <div class="fd">AI-powered burnout assessment with personalised recovery roadmap &amp; Maya's guidance.</div>
+      </div>
+      <div class="fc">
+        <span class="fi">✅</span>
+        <div class="fn2">Habit Tracker</div>
+        <div class="fd">Build wellness habits with streaks. See how habits correlate with your mood scores.</div>
+      </div>
+      <div class="fc">
+        <span class="fi">🙏</span>
+        <div class="fn2">Gratitude Journal</div>
+        <div class="fd">Daily gratitude practice with weekly AI reflections on your themes &amp; growth.</div>
+      </div>
+      <div class="fc">
+        <span class="fi">👥</span>
+        <div class="fn2">Peer Support Groups</div>
+        <div class="fd">Anonymous rooms — Anxiety, Burnout, Students. Real community, Maya-moderated.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S5 UI PREVIEW ══ -->
+<div class="slide" id="s5">
+  <div class="si">
+    <div class="stag a">Live product</div>
+    <h2 class="a">Beautiful, intuitive experience</h2>
+    <div class="screens a">
+      <!-- Chat screen mock -->
+      <div class="screen" style="display:flex;flex-direction:column">
+        <div class="hd">
+          <div class="dot3"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span style="color:rgba(249,168,212,.6);font-size:11px;margin-left:8px">Maya — Chat</span>
         </div>
-        <div class="card card-sm text-center" style="border-color:rgba(167,139,250,0.15);">
-          <div class="feat-icon">🧠</div>
-          <div style="font-weight:700; margin-bottom:6px;">CBT Tools</div>
-          <div class="small">AI-guided thought records to reframe negative thinking patterns.</div>
+        <div class="screen-body" style="flex:1">
+          <div class="cb-maya"><span style="font-size:18px">🌸</span><span>Hey! How are you feeling today? I'm here for you 💙</span></div>
+          <div class="cb-user">I've been really stressed about my exams…</div>
+          <div class="cb-maya"><span style="font-size:18px">🤗</span><span>That sounds really tough. Let's work through this together. What's worrying you the most?</span></div>
+          <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+            <div style="background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);border-radius:100px;padding:5px 12px;font-size:11px;color:#f9a8d4">🫂 I need a hug</div>
+            <div style="background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);border-radius:100px;padding:5px 12px;font-size:11px;color:#f9a8d4">💪 Hype me up</div>
+          </div>
         </div>
-        <div class="card card-sm text-center" style="border-color:rgba(251,113,133,0.15);">
-          <div class="feat-icon">📊</div>
-          <div style="font-weight:700; margin-bottom:6px;">Wellbeing Reports</div>
-          <div class="small">Daily mood check-ins + AI-generated mental health insights.</div>
+      </div>
+      <!-- Mood tracker mock -->
+      <div class="screen" style="display:flex;flex-direction:column">
+        <div class="hd">
+          <div class="dot3"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span style="color:rgba(249,168,212,.6);font-size:11px;margin-left:8px">Mood Tracker</span>
         </div>
-        <div class="card card-sm text-center">
-          <div class="feat-icon">📓</div>
-          <div style="font-weight:700; margin-bottom:6px;">AI Journal</div>
-          <div class="small">Write freely — Claude reflects patterns and provides insights.</div>
+        <div class="screen-body">
+          <div class="screen-title">This Week</div>
+          <div style="display:flex;align-items:flex-end;gap:5px;height:60px;margin-bottom:10px">
+            <div style="flex:1;background:rgba(190,24,93,.5);border-radius:4px 4px 0 0;height:40%"></div>
+            <div style="flex:1;background:rgba(190,24,93,.5);border-radius:4px 4px 0 0;height:55%"></div>
+            <div style="flex:1;background:rgba(190,24,93,.5);border-radius:4px 4px 0 0;height:35%"></div>
+            <div style="flex:1;background:rgba(147,51,234,.7);border-radius:4px 4px 0 0;height:65%"></div>
+            <div style="flex:1;background:rgba(20,184,166,.7);border-radius:4px 4px 0 0;height:80%"></div>
+            <div style="flex:1;background:rgba(20,184,166,.8);border-radius:4px 4px 0 0;height:75%"></div>
+            <div style="flex:1;background:rgba(20,184,166,.9);border-radius:4px 4px 0 0;height:90%"></div>
+          </div>
+          <div class="sm-card">
+            <div style="color:rgba(249,168,212,.6);font-size:10px;margin-bottom:4px">AVERAGE MOOD</div>
+            <div style="color:#fdf6f9;font-size:20px;font-weight:700;font-family:'Playfair Display',serif">3.8 / 5 😊</div>
+            <div class="mood-bar" style="margin-top:8px"></div>
+          </div>
+          <div class="sm-card" style="margin-top:8px">
+            <div style="color:rgba(20,184,166,.7);font-size:10px;margin-bottom:3px">MAYA INSIGHT</div>
+            <div style="color:rgba(253,246,249,.7);font-size:11px;line-height:1.4">"You feel 2× better on days you exercise 🏃"</div>
+          </div>
         </div>
-        <div class="card card-sm text-center">
-          <div class="feat-icon">🔥</div>
-          <div style="font-weight:700; margin-bottom:6px;">Burnout Assessment</div>
-          <div class="small">Measure exhaustion, cynicism, efficacy. Get a personalised action plan.</div>
+      </div>
+      <!-- Voice mode mock -->
+      <div class="screen" style="display:flex;flex-direction:column">
+        <div class="hd">
+          <div class="dot3"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+          <span style="color:rgba(249,168,212,.6);font-size:11px;margin-left:8px">Voice Call</span>
         </div>
-        <div class="card card-sm text-center">
-          <div class="feat-icon">🌬️</div>
-          <div style="font-weight:700; margin-bottom:6px;">Breathe & Learn</div>
-          <div class="small">Guided breathing exercises + mental health psychoeducation library.</div>
+        <div class="screen-body" style="align-items:center;justify-content:center;text-align:center">
+          <div style="color:rgba(249,168,212,.5);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">Maya is speaking…</div>
+          <div class="voice-ring">🌸</div>
+          <div style="display:flex;gap:4px;align-items:flex-end;height:28px;justify-content:center;margin-top:12px">
+            <div style="width:3px;background:#f9a8d4;border-radius:2px;height:60%;animation:bar .6s ease-in-out infinite alternate"></div>
+            <div style="width:3px;background:#f9a8d4;border-radius:2px;height:100%;animation:bar .6s ease-in-out infinite alternate .1s"></div>
+            <div style="width:3px;background:#f9a8d4;border-radius:2px;height:40%;animation:bar .6s ease-in-out infinite alternate .2s"></div>
+            <div style="width:3px;background:#f9a8d4;border-radius:2px;height:80%;animation:bar .6s ease-in-out infinite alternate .05s"></div>
+            <div style="width:3px;background:#f9a8d4;border-radius:2px;height:50%;animation:bar .6s ease-in-out infinite alternate .15s"></div>
+          </div>
+          <div style="color:rgba(253,246,249,.55);font-size:11px;margin-top:12px;line-height:1.5">"You did so well today.<br/>I'm really proud of you 💜"</div>
+          <div style="margin-top:14px;background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);border-radius:100px;padding:6px 16px;font-size:11px;color:#f9a8d4">🎙 Tap to respond</div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 4 · HOW IT WORKS -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s4">
-    <div class="max-w-xl w-full">
-      <div class="tag">User Journey</div>
-      <div class="h2">From <span class="accent-teal">login</span> to <span class="accent-purple">insight</span></div>
-      <div class="divider"></div>
-      <div class="col gap-md" style="margin-top:32px;">
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="card card-sm w-full" style="border-color:rgba(45,212,191,0.15);">
-            <div style="font-weight:700; margin-bottom:4px;">① Sign in</div>
-            <div class="small">Demo accounts or guest mode — zero friction. Preferences stored per-user.</div>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="card card-sm w-full" style="border-color:rgba(167,139,250,0.15);">
-            <div style="font-weight:700; margin-bottom:4px;">② Meet Maya</div>
-            <div class="small">Maya greets you with lip-synced animation, then sits down to listen. Every response has an emotion tag — her face changes in real-time.</div>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="card card-sm w-full">
-            <div style="font-weight:700; margin-bottom:4px;">③ Use the toolkit</div>
-            <div class="small">CBT, journal, mood log, burnout check, breathing — all AI-powered, all in one place.</div>
-          </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="card card-sm w-full" style="border-color:rgba(251,113,133,0.15);">
-            <div style="font-weight:700; margin-bottom:4px;">④ Get your wellbeing report</div>
-            <div class="small">Claude analyses your mood history and sessions → generates trend insights, strengths, challenges, and personalised suggestions.</div>
-          </div>
-        </div>
+<!-- ══ S6 HOW IT WORKS ══ -->
+<div class="slide" id="s6">
+  <div class="si">
+    <div class="stag-v a">Simple &amp; powerful</div>
+    <h2 class="a">How AiCoax works</h2>
+    <div class="steps a">
+      <div class="step"><div class="sn">1</div><div class="si2">👤</div><div class="st">Create Profile</div><div class="sd">Quick onboarding — tell Maya what you need and how you like support.</div></div>
+      <div class="step"><div class="sn">2</div><div class="si2">💬</div><div class="st">Talk to Maya</div><div class="sd">Chat or call — Maya listens, responds warmly, remembers what matters.</div></div>
+      <div class="step"><div class="sn">3</div><div class="si2">📈</div><div class="st">Track Growth</div><div class="sd">Log moods, habits, gratitude. Watch wellbeing improve week by week.</div></div>
+      <div class="step"><div class="sn">4</div><div class="si2">🌱</div><div class="st">Real Support</div><div class="sd">Connect with vetted therapists or peer support groups when ready.</div></div>
+    </div>
+    <div class="maya-quote a">
+      <div class="qa">🌸</div>
+      <div class="qb">Hey, I noticed you've been feeling low this week — that's completely okay. I'm here. Want to talk about what's been heavy on your heart?</div>
+      <img src="avatars/coaxing.png" alt="" style="height:70px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(249,168,212,.3))" onerror="this.style.display='none'"/>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S7 TECH ══ -->
+<div class="slide" id="s7">
+  <div class="si">
+    <div class="stag-t a">Engineering excellence</div>
+    <h2 class="a">The technology behind Maya</h2>
+    <div class="tg a">
+      <div class="tc"><div class="tci">🧠</div><div class="tcn">Claude Sonnet 4.6</div><div class="tcr">AI Brain · Anthropic</div></div>
+      <div class="tc"><div class="tci">⚡</div><div class="tcn">Next.js 16</div><div class="tcr">App Framework · Vercel</div></div>
+      <div class="tc"><div class="tci">🗄️</div><div class="tcn">Supabase</div><div class="tcr">Realtime Database</div></div>
+      <div class="tc"><div class="tci">🎙️</div><div class="tcn">Web Speech API</div><div class="tcr">Voice Conversations</div></div>
+    </div>
+    <div class="ab a">
+      <div class="ai"><div class="al">Response Time</div><div class="av">&lt;800ms</div></div>
+      <div class="as">·</div>
+      <div class="ai"><div class="al">Languages</div><div class="av">16+</div></div>
+      <div class="as">·</div>
+      <div class="ai"><div class="al">UI Themes</div><div class="av">6 Beautiful</div></div>
+      <div class="as">·</div>
+      <div class="ai"><div class="al">Platform</div><div class="av">PWA · Web · Mobile</div></div>
+      <div class="as">·</div>
+      <div class="ai"><div class="al">Privacy</div><div class="av">Encrypted</div></div>
+    </div>
+    <div class="tlabel a">
+      <div class="ai"><div class="tl">Frontend</div><div class="tv">Next.js + TypeScript + Tailwind v4</div></div>
+      <div class="as" style="color:rgba(167,139,250,.25)">·</div>
+      <div class="ai"><div class="tl">AI Layer</div><div class="tv">Claude API streaming + custom prompts</div></div>
+      <div class="as" style="color:rgba(167,139,250,.25)">·</div>
+      <div class="ai"><div class="tl">Backend</div><div class="tv">Supabase Realtime + Edge Functions</div></div>
+      <div class="as" style="color:rgba(167,139,250,.25)">·</div>
+      <div class="ai"><div class="tl">Deploy</div><div class="tv">Vercel · Global CDN</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S8 VISION ══ -->
+<div class="slide" id="s8">
+  <div class="si">
+    <div class="lft">
+      <div class="stag a">Our vision</div>
+      <h2 class="a">Mental wellness,<br/><em>accessible to all</em></h2>
+      <div class="il a">
+        <div class="ii"><div class="id"></div><div class="it">Free tier always available — no one left behind</div></div>
+        <div class="ii"><div class="id"></div><div class="it">Bridges the gap between self-care and professional therapy</div></div>
+        <div class="ii"><div class="id"></div><div class="it">Built for India — multilingual, culturally sensitive</div></div>
+        <div class="ii"><div class="id"></div><div class="it">Crisis support with real hotlines (iCall · Vandrevala · Wysa)</div></div>
+        <div class="ii"><div class="id"></div><div class="it">Therapist marketplace for seamless care escalation</div></div>
+        <div class="ii"><div class="id"></div><div class="it">Community peer support — you're never alone</div></div>
+      </div>
+    </div>
+    <div class="rgt">
+      <div class="mc a"><div class="mv">150M+</div><div class="ml2">Indians who need mental health support but can't access it today</div></div>
+      <div class="mc a"><div class="mv">₹0</div><div class="ml2">Cost to start talking to Maya — always free, always caring</div></div>
+      <div class="mc a"><div class="mv">24/7</div><div class="ml2">Maya is there at 3am when no one else is — no appointments, no waitlist</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S9 CTA ══ -->
+<div class="slide" id="s9">
+  <div class="si">
+    <div class="bo1"></div><div class="bo2"></div>
+    <img class="maya-s" src="avatars/happy.png" alt="Maya"
+         onerror="this.style.display='none'"/>
+    <div class="cnt">
+      <div class="hts a">🌸 &nbsp;💜 &nbsp;🌸</div>
+      <div class="badge a">✦ &nbsp;Start your journey today</div>
+      <h2 class="a">You deserve<br/><span>someone in your corner</span></h2>
+      <p class="a">AiCoax is more than an app — it's a companion who shows up every single day, no judgment, no waitlist, no cost. Just Maya and you.</p>
+      <div class="btns a">
+        <button class="bm">Talk to Maya Now</button>
+        <button class="bg2">Learn More</button>
+      </div>
+      <div class="fn a">Built with love · Powered by Claude AI · Privacy-first · Always free to start</div>
+      <div class="social a">
+        <div class="si-item">aicoax.app</div>
+        <div class="si-item">@aicoax</div>
+        <div class="si-item">Product Hunt →</div>
       </div>
     </div>
   </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 5 · MAYA AVATAR -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s5">
-    <div class="max-w-xl w-full">
-      <div class="tag">The Star Feature</div>
-      <div class="h2">Maya — <span class="accent-teal">not a chatbot, a companion</span></div>
-      <div class="divider"></div>
-      <div class="grid-2" style="margin-top:28px; gap: 24px; align-items:start;">
-        <div>
-          <div class="expression-grid">
-            <div class="exp-card"><div class="exp-emoji">😐</div><div class="exp-label">Neutral</div></div>
-            <div class="exp-card"><div class="exp-emoji">😊</div><div class="exp-label">Happy</div></div>
-            <div class="exp-card"><div class="exp-emoji">😢</div><div class="exp-label">Sad</div></div>
-            <div class="exp-card"><div class="exp-emoji">🤩</div><div class="exp-label">Excited</div></div>
-            <div class="exp-card"><div class="exp-emoji">💪</div><div class="exp-label">Coaxing</div></div>
-            <div class="exp-card"><div class="exp-emoji">🤔</div><div class="exp-label">Thinking</div></div>
-            <div class="exp-card"><div class="exp-emoji">🥰</div><div class="exp-label">Blush</div></div>
-            <div class="exp-card"><div class="exp-emoji">😭</div><div class="exp-label">Crying</div></div>
-            <div class="exp-card"><div class="exp-emoji">😂</div><div class="exp-label">Laughing</div></div>
-            <div class="exp-card"><div class="exp-emoji">😤</div><div class="exp-label">Angry</div></div>
-          </div>
-          <div class="small" style="text-align:center; margin-top:12px;">10 live expressions · SVG animated</div>
-        </div>
-        <div class="col gap-md">
-          <div class="card card-sm" style="border-color:rgba(45,212,191,0.15);">
-            <div style="font-weight:700; margin-bottom:4px;">🎭 Real-time emotion</div>
-            <div class="small">Claude prefixes every reply with an emotion tag. Maya's face, pose, and expression update instantly.</div>
-          </div>
-          <div class="card card-sm">
-            <div style="font-weight:700; margin-bottom:4px;">💋 Lip sync</div>
-            <div class="small">Phoneme cycle animation synced to Web Speech API — Maya's mouth moves as she speaks.</div>
-          </div>
-          <div class="card card-sm">
-            <div style="font-weight:700; margin-bottom:4px;">🪑 Pose transitions</div>
-            <div class="small">Stands to greet you, then smoothly sits down to listen. SVG morphing via Framer Motion.</div>
-          </div>
-          <div class="card card-sm">
-            <div style="font-weight:700; margin-bottom:4px;">🌸 Personalised tone</div>
-            <div class="small">Gentle / Direct / Fun / Motivational — Maya adapts her whole personality to your preference.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 6 · PERSONALISATION -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s6">
-    <div class="max-w-xl w-full">
-      <div class="tag">Personalisation</div>
-      <div class="h2">Built for <span class="accent-purple">your</span> mental health</div>
-      <div class="divider"></div>
-      <div class="grid-2" style="margin-top:32px;">
-        <div class="card" style="border-color:rgba(167,139,250,0.2);">
-          <div style="font-size:28px; margin-bottom:12px;">👤</div>
-          <div style="font-weight:700; margin-bottom:8px;">Per-User Accounts</div>
-          <div class="small" style="line-height:1.8;">
-            3 demo accounts + guest mode<br/>
-            Chat history saved per user<br/>
-            All prefs in localStorage<br/>
-            Full privacy — zero backend DB
-          </div>
-        </div>
-        <div class="card" style="border-color:rgba(45,212,191,0.2);">
-          <div style="font-size:28px; margin-bottom:12px;">🎨</div>
-          <div style="font-weight:700; margin-bottom:8px;">7 Themes + Backgrounds</div>
-          <div class="small" style="line-height:1.8;">
-            Dark / Light / Blush themes<br/>
-            Aurora, Lavender, Sunset, Ocean, Forest<br/>
-            Custom image URL background<br/>
-            Persisted per user account
-          </div>
-        </div>
-        <div class="card">
-          <div style="font-size:28px; margin-bottom:12px;">🌍</div>
-          <div style="font-weight:700; margin-bottom:8px;">19 Languages</div>
-          <div class="small" style="line-height:1.8;">
-            10 Indian languages incl. Hindi, Tamil, Telugu, Bengali<br/>
-            + English, Spanish, French, Japanese, Korean, Arabic<br/>
-            TTS voice with Indian female priority
-          </div>
-        </div>
-        <div class="card">
-          <div style="font-size:28px; margin-bottom:12px;">🌸</div>
-          <div style="font-weight:700; margin-bottom:8px;">Maya Personalisation</div>
-          <div class="small" style="line-height:1.8;">
-            Set your nickname<br/>
-            Choose Maya's tone<br/>
-            Gentle · Direct · Fun · Motivational<br/>
-            Maya uses your name naturally
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 7 · TECH STACK -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide bg-gradient-tech" id="s7">
-    <div class="max-w-xl w-full">
-      <div class="tag">Technology</div>
-      <div class="h2">Built with <span class="accent-purple">best-in-class</span> tools</div>
-      <div class="divider"></div>
-      <div class="grid-2" style="margin-top:32px; gap:20px; align-items:start;">
-        <div>
-          <div class="small" style="color:var(--teal); font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;">Frontend</div>
-          <div class="col" style="gap:10px;">
-            <div class="pill">▲ Next.js 16 + App Router</div>
-            <div class="pill">⚛️ React 19</div>
-            <div class="pill">💨 Tailwind CSS v4</div>
-            <div class="pill">🎞 Framer Motion</div>
-            <div class="pill">🗣 Web Speech API</div>
-          </div>
-        </div>
-        <div>
-          <div class="small" style="color:var(--purple); font-weight:600; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;">AI / Backend</div>
-          <div class="col" style="gap:10px;">
-            <div class="pill pill-purple">🤖 Claude Sonnet 4.6 (chat)</div>
-            <div class="pill pill-purple">⚡ Claude Haiku 4.5 (tools)</div>
-            <div class="pill pill-purple">🔁 Streaming API responses</div>
-            <div class="pill">🗄️ localStorage (zero backend)</div>
-            <div class="pill">📦 TypeScript end-to-end</div>
-          </div>
-        </div>
-      </div>
-      <div class="card card-highlight" style="margin-top:24px;">
-        <div class="row gap-md" style="flex-wrap:wrap; gap:24px;">
-          <div>
-            <div style="font-weight:700; font-size:13px; color:var(--teal);">Claude Sonnet 4.6</div>
-            <div class="small">Maya chat · CBT analysis · Journal insights</div>
-          </div>
-          <div style="width:1px; height:40px; background:rgba(148,163,184,0.1);"></div>
-          <div>
-            <div style="font-weight:700; font-size:13px; color:var(--purple);">Claude Haiku 4.5</div>
-            <div class="small">Burnout assessment · Wellbeing reports (fast + cheap)</div>
-          </div>
-          <div style="width:1px; height:40px; background:rgba(148,163,184,0.1);"></div>
-          <div>
-            <div style="font-weight:700; font-size:13px; color:var(--slate-300);">Zero DB</div>
-            <div class="small">All data in localStorage — no server costs, full privacy</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 8 · SAFETY & ETHICS -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s8">
-    <div class="max-w-xl w-full">
-      <div class="tag">Safety & Ethics</div>
-      <div class="h2">AI with a <span class="accent-rose">conscience</span></div>
-      <div class="divider"></div>
-      <div class="col gap-md" style="margin-top:32px;">
-        <div class="row gap-md" style="flex-wrap:wrap; gap:20px;">
-          <div class="card card-sm" style="flex:1; min-width:200px; border-color:rgba(251,113,133,0.2);">
-            <div style="font-size:24px; margin-bottom:8px;">🆘</div>
-            <div style="font-weight:700; margin-bottom:6px;">Crisis Detection</div>
-            <div class="small">Any sign of suicidal ideation or self-harm → Maya immediately provides iCall (9152987821), Vandrevala, NIMHANS numbers</div>
-          </div>
-          <div class="card card-sm" style="flex:1; min-width:200px;">
-            <div style="font-size:24px; margin-bottom:8px;">👩‍⚕️</div>
-            <div style="font-weight:700; margin-bottom:6px;">Not a Therapist</div>
-            <div class="small">Every 4-6 exchanges, Maya reminds users she's an AI companion and encourages seeking professional help</div>
-          </div>
-        </div>
-        <div class="row gap-md" style="flex-wrap:wrap; gap:20px;">
-          <div class="card card-sm" style="flex:1; min-width:200px;">
-            <div style="font-size:24px; margin-bottom:8px;">🔒</div>
-            <div style="font-weight:700; margin-bottom:6px;">Privacy First</div>
-            <div class="small">All data stored locally in the user's browser. No chat history sent to any server except the Claude API call</div>
-          </div>
-          <div class="card card-sm" style="flex:1; min-width:200px; border-color:rgba(45,212,191,0.2);">
-            <div style="font-size:24px; margin-bottom:8px;">📚</div>
-            <div style="font-weight:700; margin-bottom:6px;">Evidence-Based</div>
-            <div class="small">CBT, ACT, and mindfulness frameworks. Trained to validate before advising. Real talk, not toxic positivity</div>
-          </div>
-        </div>
-        <div class="card card-highlight">
-          <div class="quote" style="font-size:15px;">
-            "AiCoax is a bridge — not a replacement. It makes mental health support accessible at 2am, in Hindi, for free."
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 9 · MARKET OPPORTUNITY -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s9">
-    <div class="max-w-xl w-full">
-      <div class="tag">Market Opportunity</div>
-      <div class="h2">A <span class="accent-teal">$20B</span> market with no clear winner</div>
-      <div class="divider"></div>
-      <div class="grid-3" style="margin-top:32px;">
-        <div class="card text-center glow-teal" style="border-color:rgba(45,212,191,0.2);">
-          <div class="stat-val accent-teal" style="font-size:40px;">200M+</div>
-          <div class="stat-label">Indians with mental health needs</div>
-        </div>
-        <div class="card text-center" style="border-color:rgba(167,139,250,0.15);">
-          <div class="stat-val accent-purple" style="font-size:40px;">$20B</div>
-          <div class="stat-label">Global mental health app market by 2030</div>
-        </div>
-        <div class="card text-center">
-          <div class="stat-val accent-rose" style="font-size:40px;">35%</div>
-          <div class="stat-label">CAGR for AI mental health tools</div>
-        </div>
-      </div>
-      <div class="col gap-md" style="margin-top:20px;">
-        <div class="card card-sm">
-          <div style="font-weight:700; margin-bottom:8px;">Why now?</div>
-          <div class="row" style="gap:24px; flex-wrap:wrap;">
-            <div class="small">✅ GenZ normalises AI interactions</div>
-            <div class="small">✅ Claude makes empathetic AI real</div>
-            <div class="small">✅ Post-COVID mental health awareness surge</div>
-            <div class="small">✅ Indian-language AI finally good enough</div>
-          </div>
-        </div>
-        <div class="card card-sm">
-          <div style="font-weight:700; margin-bottom:10px;">Competitive edge</div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="row" style="gap:12px; align-items:center;">
-              <div style="flex:2; font-size:13px; color:var(--slate-400);">Woebot / Wysa</div>
-              <div class="progress-bar" style="flex:5;"><div class="progress-fill" style="width:40%; background: #475569;"></div></div>
-              <div style="font-size:12px; color:var(--slate-500);">Text-only, no persona</div>
-            </div>
-            <div class="row" style="gap:12px; align-items:center;">
-              <div style="flex:2; font-size:13px; color:var(--slate-400);">Replika</div>
-              <div class="progress-bar" style="flex:5;"><div class="progress-fill" style="width:55%; background: #475569;"></div></div>
-              <div style="font-size:12px; color:var(--slate-500);">Generic, not mental health</div>
-            </div>
-            <div class="row" style="gap:12px; align-items:center;">
-              <div style="flex:2; font-size:13px; font-weight:600; color:var(--teal);">AiCoax ✦</div>
-              <div class="progress-bar" style="flex:5;"><div class="progress-fill" style="width:92%;"></div></div>
-              <div style="font-size:12px; color:var(--teal);">Animated + multilingual + CBT</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 10 · ROADMAP -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide" id="s10">
-    <div class="max-w-xl w-full">
-      <div class="tag">Roadmap</div>
-      <div class="h2">From <span class="accent-teal">MVP</span> to <span class="accent-purple">platform</span></div>
-      <div class="divider"></div>
-      <div class="grid-3" style="margin-top:32px; gap:16px;">
-        <div class="card" style="border-color:rgba(45,212,191,0.25);">
-          <div class="pill pill-teal" style="margin-bottom:14px; font-size:11px;">✅ Now · v1.0</div>
-          <div class="col" style="gap:8px;">
-            <div class="small">✓ Maya AI companion</div>
-            <div class="small">✓ CBT thought records</div>
-            <div class="small">✓ Journal with AI insight</div>
-            <div class="small">✓ Burnout assessment</div>
-            <div class="small">✓ Mood tracking + reports</div>
-            <div class="small">✓ 19 languages</div>
-            <div class="small">✓ Auth + personalisation</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="pill" style="margin-bottom:14px; font-size:11px; color:var(--purple); border-color:rgba(167,139,250,0.3);">🔜 v2.0 · Q3 2025</div>
-          <div class="col" style="gap:8px;">
-            <div class="small">○ Real therapist connect</div>
-            <div class="small">○ Voice-first UI</div>
-            <div class="small">○ Weekly AI therapy sessions</div>
-            <div class="small">○ Group support rooms</div>
-            <div class="small">○ Wearable mood tracking</div>
-            <div class="small">○ Supabase backend</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="pill" style="margin-bottom:14px; font-size:11px;">🚀 v3.0 · 2026</div>
-          <div class="col" style="gap:8px;">
-            <div class="small">○ B2B: corporate wellness</div>
-            <div class="small">○ University partnerships</div>
-            <div class="small">○ Clinician dashboard</div>
-            <div class="small">○ Regional language packs</div>
-            <div class="small">○ Insurance integrations</div>
-            <div class="small">○ Custom Maya avatars</div>
-          </div>
-        </div>
-      </div>
-      <div class="card card-highlight" style="margin-top:20px;">
-        <div class="row" style="gap:40px; justify-content:center; flex-wrap:wrap;">
-          <div class="text-center">
-            <div class="stat-val accent-teal" style="font-size:32px;">Freemium</div>
-            <div class="stat-label">Core features free forever</div>
-          </div>
-          <div class="text-center">
-            <div class="stat-val accent-purple" style="font-size:32px;">₹299/mo</div>
-            <div class="stat-label">Maya Pro — unlimited sessions</div>
-          </div>
-          <div class="text-center">
-            <div class="stat-val accent-rose" style="font-size:32px;">B2B</div>
-            <div class="stat-label">Enterprise wellness contracts</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────────── -->
-  <!-- SLIDE 11 · CLOSING / CTA -->
-  <!-- ─────────────────────────────────────────── -->
-  <div class="slide bg-gradient-hero center" id="s11">
-    <div class="max-w-xl w-full text-center">
-      <div style="font-size:60px; margin-bottom:8px; filter:drop-shadow(0 0 20px rgba(45,212,191,0.4));">🌿</div>
-      <div class="h2" style="margin-bottom:12px;">Mental health support<br/><span class="accent-teal">for everyone, everywhere</span></div>
-      <div class="divider divider-center"></div>
-      <div class="body" style="margin: 24px auto; max-width: 540px;">
-        AiCoax bridges the gap between struggling alone and getting professional help. Warm, intelligent, multilingual, and always available — at 2am, in Hindi, for free.
-      </div>
-      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:28px;">
-        <div class="card card-sm card-highlight" style="min-width:160px;">
-          <div class="stat-val accent-teal" style="font-size:32px;">Live</div>
-          <div class="stat-label">on Vercel today</div>
-        </div>
-        <div class="card card-sm" style="min-width:160px; border-color:rgba(167,139,250,0.2);">
-          <div class="stat-val accent-purple" style="font-size:32px;">Open</div>
-          <div class="stat-label">source on GitHub</div>
-        </div>
-        <div class="card card-sm" style="min-width:160px;">
-          <div class="stat-val" style="font-size:32px;">~4h</div>
-          <div class="stat-label">built at hackathon</div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:28px; border-color:rgba(45,212,191,0.2); background:rgba(13,148,136,0.06);">
-        <div class="quote" style="font-size:16px; font-style:normal;">
-          "You don't have to be okay all the time — but you do deserve support that actually gets you."
-          <br/><span style="font-size:13px; color:var(--teal); font-style:normal; margin-top:8px; display:block;">— Maya 🧡</span>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
 </div><!-- /deck -->
 
-<!-- Nav -->
-<nav class="nav">
-  <button id="btnPrev" onclick="prev()">←</button>
-  <div class="dots" id="dots"></div>
-  <span class="slide-count" id="slideCount">1 / 11</span>
-  <button id="btnNext" onclick="next()">→</button>
-</nav>
+<button class="arr" id="pv">‹</button>
+<button class="arr" id="nx">›</button>
+<div id="nav"></div>
+<div id="ctr"></div>
+<div id="stit">AiCoax</div>
+
+<style>
+@keyframes bar{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
+</style>
 
 <script>
-  const slides = document.querySelectorAll('.slide');
-  const totalSlides = slides.length;
-  let current = 0;
+const slides=document.querySelectorAll('.slide');
+const nav=document.getElementById('nav');
+const ctr=document.getElementById('ctr');
+const titles=['Hero','Problem','Meet Maya','Features','UI Preview','How It Works','Tech Stack','Vision','Get Started'];
+let cur=0;
 
-  // Build dots
-  const dotsEl = document.getElementById('dots');
-  for (let i = 0; i < totalSlides; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTo(i);
-    dotsEl.appendChild(d);
-  }
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>go(i);
+  nav.appendChild(d);
+});
 
-  function goTo(n) {
-    if (n < 0 || n >= totalSlides) return;
-    slides[current].classList.remove('active');
-    slides[current].classList.add('exit');
-    setTimeout(() => slides[current].classList.remove('exit'), 450);
-    current = n;
-    slides[current].classList.add('active');
-    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
-    document.getElementById('slideCount').textContent = `${current + 1} / ${totalSlides}`;
-    document.getElementById('btnPrev').classList.toggle('disabled', current === 0);
-    document.getElementById('btnNext').classList.toggle('disabled', current === totalSlides - 1);
-  }
+function go(n){
+  slides[cur].classList.remove('active');
+  nav.children[cur].classList.remove('on');
+  cur=(n+slides.length)%slides.length;
+  slides[cur].classList.add('active');
+  nav.children[cur].classList.add('on');
+  ctr.textContent=`${cur+1} / ${slides.length}`;
+  document.getElementById('stit').textContent='AiCoax · '+titles[cur];
+}
 
-  function prev() { goTo(current - 1); }
-  function next() { goTo(current + 1); }
+go(0);
+document.getElementById('pv').onclick=()=>go(cur-1);
+document.getElementById('nx').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(cur+1)}
+  if(e.key==='ArrowLeft')go(cur-1);
+  if(e.key==='Escape')go(0);
+});
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') next();
-    if (e.key === 'ArrowLeft') prev();
-  });
-
-  // Touch swipe
-  let touchX = 0;
-  document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
-  document.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchX;
-    if (dx < -50) next();
-    if (dx > 50) prev();
-  });
-
-  goTo(0);
+// Swipe
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const d=e.changedTouches[0].clientX-tx;
+  if(Math.abs(d)>45)go(d<0?cur+1:cur-1);
+},{passive:true});
 </script>
 </body>
 </html>
